@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { useScroll, useTransform, motion } from "framer-motion";
+import { FaLinkedinIn, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import {
   CheckCircle,
   Target,
@@ -432,7 +434,40 @@ export default function ResultPage() {
 
   return (
     <div className="font-sans min-h-screen bg-white flex flex-col">
+      {/* ── Header Navbar ────────────────────────────────────────────────────── */}
+      <header
+        style={{
+          borderBottom: "1px solid #E2E8F0",
+          padding: "14px 24px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          background: "#FFFFFF",
+          position: "sticky", top: 0, zIndex: 50,
+        }}
+      >
+        {/* Left Side Logos */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <img
+            src="/sona__1_-removebg-preview.png"
+            alt="Sona Logo"
+            style={{ height: 36, width: "auto", objectFit: "contain" }}
+          />
+          <div style={{ width: 1, height: 24, background: "rgba(15, 23, 42, 0.15)" }} />
+          <img
+            src="/Scale Logo High Res (1).png"
+            alt="Scale Logo"
+            style={{ height: 44, width: "auto", objectFit: "contain" }}
+          />
+          <div style={{ width: 1, height: 24, background: "rgba(15, 23, 42, 0.15)" }} />
+          <span style={{ fontSize: 13, color: "#475569", fontWeight: 600 }}>Evaluation Report</span>
+        </div>
 
+        {/* Right Side poweredby */}
+        <img
+          src="/poweredby.png"
+          alt="Powered by Sentra"
+          style={{ height: 32, width: "auto", objectFit: "contain", opacity: 0.85 }}
+        />
+      </header>
 
       {/* ── Body ────────────────────────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row flex-1 overflow-y-auto md:overflow-hidden">
@@ -643,18 +678,7 @@ export default function ResultPage() {
       </div>
 
       {/* Footer ──────────────────────────────────────────────────────────── */}
-      <div className="border-t border-slate-200 bg-white px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
-        <div className="flex items-center gap-2">
-          <Image src="/image-removebg-preview (1).png" alt={BRANDING.appName} width={16} height={16} className="object-contain opacity-70" />
-          <span className="text-[11px] text-slate-500 font-semibold text-center sm:text-left">{BRANDING.appName} · Reveal Potential. Report Precision.</span>
-        </div>
-        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-[11px] text-slate-400 font-semibold">
-          <span>© {new Date().getFullYear()} {BRANDING.appName}. All rights reserved.</span>
-          <button onClick={handleRetake} className="flex items-center gap-1 text-[#2563FF] font-bold hover:underline">
-            <ListRestart className="w-3 h-3" /> Retake
-          </button>
-        </div>
-      </div>
+      <ScrollResponsiveFooter />
 
       {/* Hidden PDF Report */}
       <div className="fixed top-[-9999px] left-[-9999px] z-[-9999] opacity-0 pointer-events-none">
@@ -670,5 +694,150 @@ export default function ResultPage() {
         />
       </div>
     </div>
+  );
+}
+
+// ── Scroll Responsive Footer Component ─────────────────────────────────────
+function ScrollResponsiveFooter() {
+  const footerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: footerRef,
+    offset: ["start end", "end end"],
+  });
+
+  // Scroll calculation: Shrinks from oversized (1.5x) down to normal size (1.0x) as user scrolls into footer
+  const scale = useTransform(scrollYProgress, [0, 1], [1.5, 1.0]);
+  const opacity = useTransform(scrollYProgress, [0, 0.4, 1], [0.3, 0.85, 1]);
+  const letterSpacing = useTransform(scrollYProgress, [0, 1], ["-0.02em", "-0.04em"]);
+
+  return (
+    <footer
+      ref={footerRef}
+      style={{
+        borderTop: "1px solid #DFE1E6",
+        background: "#FAFBFC",
+        padding: "80px 24px 40px",
+        overflow: "hidden",
+        position: "relative",
+        zIndex: 1,
+      }}
+    >
+      {/* Background Subtle Radial Light */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: -150,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: 800,
+          height: 350,
+          background: "radial-gradient(ellipse at center, rgba(124, 58, 237, 0.08) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }}
+      />
+
+      <div style={{ maxWidth: 1340, width: "100%", margin: "0 auto", position: "relative", zIndex: 1 }}>
+        {/* Social Icons Row & Platform Metadata */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 24,
+            marginBottom: 56,
+            paddingBottom: 36,
+            borderBottom: "1px solid #DFE1E6",
+          }}
+        >
+          <div>
+            <div
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: 15,
+                fontWeight: 800,
+                color: "#172B4D",
+                marginBottom: 6,
+                letterSpacing: "-0.01em",
+              }}
+            >
+              HireSapien — Engineering Simulation Center
+            </div>
+            <div style={{ fontSize: 13, color: "#5E6C84", fontWeight: 500 }}>
+              Powered by Gemini &amp; Claude • Results stored securely • GDPR-compliant
+            </div>
+          </div>
+
+          {/* Social Icons in a Single Row */}
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            {[
+              { icon: <FaLinkedinIn className="w-5 h-5" />, label: "LinkedIn", href: "https://linkedin.com" },
+              { icon: <FaInstagram className="w-5 h-5" />, label: "Instagram", href: "https://instagram.com" },
+              { icon: <FaWhatsapp className="w-5 h-5" />, label: "WhatsApp", href: "https://whatsapp.com" },
+            ].map(social => (
+              <motion.a
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.12, y: -3 }}
+                whileTap={{ scale: 0.94 }}
+                style={{
+                  width: 46,
+                  height: 46,
+                  borderRadius: 14,
+                  background: "#FFFFFF",
+                  border: "1px solid #DFE1E6",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#172B4D",
+                  textDecoration: "none",
+                  transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                }}
+                className="hover:border-purple-600 hover:text-purple-600 hover:shadow-md hover:shadow-purple-500/10"
+              >
+                {social.icon}
+              </motion.a>
+            ))}
+          </div>
+        </div>
+
+        {/* Scroll-Responsive Enlarged HIRESAPIEN Text */}
+        <motion.div
+          style={{
+            scale,
+            opacity,
+            letterSpacing,
+            transformOrigin: "bottom center",
+            textAlign: "center",
+            userSelect: "none",
+            width: "100%",
+          }}
+        >
+          <h1
+            style={{
+              fontFamily: "var(--font-sans)",
+              fontSize: "clamp(48px, 12.8vw, 190px)",
+              fontWeight: 900,
+              lineHeight: 0.88,
+              textTransform: "uppercase",
+              color: "#000000",
+              margin: 0,
+              display: "block",
+              width: "100%",
+            }}
+          >
+            HIRESAPIEN
+          </h1>
+        </motion.div>
+
+        {/* Bottom Small Copyright */}
+        <div style={{ textAlign: "center", marginTop: 24, fontSize: 12, color: "#7A869A", fontWeight: 600 }}>
+          © {new Date().getFullYear()} HireSapien Inc. All rights reserved.
+        </div>
+      </div>
+    </footer>
   );
 }

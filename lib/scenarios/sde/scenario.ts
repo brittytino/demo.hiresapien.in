@@ -12,9 +12,9 @@ export const SDE_SCENARIO = {
   roleLabel: "Software Development Engineer",
   company: "Fintra Engineering",
   team: "Platform Infrastructure",
-  manager: "Priya Anand",
+  manager: "Theerthana",
   seniorPeer: "Marcus Cole",
-  designLead: "Zara Osei",
+  designLead: "Sara Fathima",
 
   context: {
     sprint: "Sprint 22 — Week 2 of 2",
@@ -55,15 +55,15 @@ Fintra processes $4.2B in annual payment volume for 1,200+ enterprise clients.
 Reliability is the product.
 
 You will be working with:
-  - Priya Anand (Engineering Manager) — your direct manager
+  - Theerthana (Engineering Manager) — your direct manager
   - Marcus Cole (Senior SDE) — your sprint buddy
-  - Zara Osei (Tech Lead) — sets technical direction
+  - Sara Fathima (Tech Lead) — sets technical direction
 
 Your first task is waiting in Jira. The sprint board is active.
 
 Welcome to the team.
 
-— Priya Anand
+— Theerthana
   Engineering Manager, Platform Infrastructure
   Fintra Engineering
     `.trim(),
@@ -83,20 +83,23 @@ Welcome to the team.
         from: "Marcus Cole",
         role: "Senior SDE",
         avatar: "MC",
+        avatarImg: "/marcus_profile.png",
         message: "Hey! Welcome to Platform. Today's a bit of a baptism by fire — we have a P1 on the payment gateway. Check Jira first, then ping me if you get stuck. You've got this.",
         time: "9:41 AM",
       },
       {
-        from: "Priya Anand",
+        from: "Theerthana",
         role: "Engineering Manager",
-        avatar: "PA",
+        avatar: "T",
+        avatarImg: "/theerthana_profile.png",
         message: "Great to have you on the team. I've added you to the sprint. The Gateway Timeout issue is FIN-2847 — it's P1, so this is your first real priority. Marcus will be available if you need a pair-programming session.",
         time: "9:44 AM",
       },
       {
-        from: "Zara Osei",
+        from: "Sara Fathima",
         role: "Tech Lead",
-        avatar: "ZO",
+        avatar: "S",
+        avatarImg: "/sara_profile.png",
         message: "TLDR on the architecture: payment-gateway-service handles all Stripe webhooks via an async queue introduced in v2.14.1. The queue has a default timeout of 5s but Stripe sometimes takes 8-12s. That's your starting hypothesis — look at the Grafana latency data first.",
         time: "9:52 AM",
       },

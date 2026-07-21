@@ -6,12 +6,14 @@
 
 "use client";
 
-import { useEffect, useState, use } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, use, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { FaLinkedinIn, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import {
   Download, Share2, CheckCircle, XCircle,
   AlertTriangle, TrendingUp, TrendingDown, Minus,
   ChevronDown, ChevronUp, Sparkles,
+  FileText, Calendar, FolderOpen, Search, Code2, Database, ShieldCheck, Clock, User, Trophy, Target
 } from "lucide-react";
 import type { IEvaluationReport, ICompetencyScore } from "@/models/EvaluationReport";
 import { HIRING_THRESHOLDS } from "@/lib/evaluation/thresholds";
@@ -21,6 +23,20 @@ import { HIRING_THRESHOLDS } from "@/lib/evaluation/thresholds";
 interface ReportData extends Omit<IEvaluationReport, "_id"> {
   _id: string;
 }
+
+const cleanLabels: Record<string, string> = {
+  RequirementUnderstanding: "Requirement Understanding",
+  EngineeringPlanning: "Engineering Planning",
+  CodebaseNavigation: "Codebase Navigation",
+  InvestigationDebugging: "Investigation & Debugging",
+  FeatureImplementation: "Feature Implementation",
+  APIAndDatabaseIntegration: "API & Database Integration",
+  TestingAndQuality: "Testing & Quality",
+  Productivity: "Productivity",
+  AICollaboration: "AI Collaboration",
+  EngineeringBehavior: "Engineering Behavior",
+  DeliveryExcellence: "Delivery Excellence",
+};
 
 // ── Main Report Page ──────────────────────────────────────────────────────
 
@@ -67,70 +83,76 @@ export default function ReportPage({ params }: { params: Promise<{ attemptId: st
     <div className="hub-body" style={{ minHeight: "100dvh" }}>
 
       {/* ── Top navigation ─────────────────────────────────────────────── */}
+      {/* ── Top navigation ─────────────────────────────────────────────── */}
       <header
         style={{
           borderBottom: "1px solid var(--ws-border-0)",
-          padding: "14px 20px",
+          padding: "14px 24px",
           display: "flex", alignItems: "center", justifyContent: "space-between",
           background: "var(--ws-paper-1)",
           position: "sticky", top: 0, zIndex: 50,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div
-            style={{
-              width: 28, height: 28, borderRadius: 7,
-              background: "var(--ws-accent)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 12, fontWeight: 800, color: "#fff",
-              fontFamily: "var(--font-display)",
-            }}
-          >
-            HS
-          </div>
-          <span
-            className="ws-display"
-            style={{ fontWeight: 700, fontSize: 15, color: "var(--ws-ink-0)", letterSpacing: "-0.02em" }}
-          >
-            HireSapien
-          </span>
-          <span style={{ fontSize: 13, color: "var(--ws-ink-3)" }}>/ Evaluation Report</span>
+        {/* Left Side Logos */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <img
+            src="/sona__1_-removebg-preview.png"
+            alt="Sona Logo"
+            style={{ height: 36, width: "auto", objectFit: "contain" }}
+          />
+          <div style={{ width: 1, height: 24, background: "rgba(15, 23, 42, 0.15)" }} />
+          <img
+            src="/Scale Logo High Res (1).png"
+            alt="Scale Logo"
+            style={{ height: 44, width: "auto", objectFit: "contain" }}
+          />
+          <div style={{ width: 1, height: 24, background: "rgba(15, 23, 42, 0.15)" }} />
+          <span style={{ fontSize: 13, color: "var(--ws-ink-2)", fontWeight: 600 }}>Evaluation Report</span>
         </div>
 
-        <div style={{ display: "flex", gap: 10 }}>
-          <button
-            onClick={handleShare}
-            id="share-report-btn"
-            style={{
-              display: "flex", alignItems: "center", gap: 7,
-              padding: "7px 14px",
-              background: "var(--ws-paper-3)", border: "1px solid var(--ws-border-1)",
-              borderRadius: "var(--ws-radius-sm)",
-              color: "var(--ws-ink-1)", fontSize: 13, fontWeight: 600, cursor: "pointer",
-            }}
-          >
-            <Share2 className="w-4 h-4" />
-            {showShareToast ? "Copied!" : "Share Report"}
-          </button>
-          <button
-            onClick={() => window.print()}
-            id="download-report-btn"
-            style={{
-              display: "flex", alignItems: "center", gap: 7,
-              padding: "7px 14px",
-              background: "var(--ws-accent)", border: "none",
-              borderRadius: "var(--ws-radius-sm)",
-              color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer",
-            }}
-          >
-            <Download className="w-4 h-4" />
-            Download PDF
-          </button>
+        {/* Right Side poweredby & Actions */}
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <img
+            src="/poweredby.png"
+            alt="Powered by Sentra"
+            style={{ height: 32, width: "auto", objectFit: "contain", opacity: 0.85 }}
+          />
+          <div style={{ width: 1, height: 24, background: "rgba(15, 23, 42, 0.15)" }} />
+          <div style={{ display: "flex", gap: 10 }}>
+            <button
+              onClick={handleShare}
+              id="share-report-btn"
+              style={{
+                display: "flex", alignItems: "center", gap: 7,
+                padding: "7px 14px",
+                background: "var(--ws-paper-3)", border: "1px solid var(--ws-border-1)",
+                borderRadius: "var(--ws-radius-sm)",
+                color: "var(--ws-ink-1)", fontSize: 13, fontWeight: 600, cursor: "pointer",
+              }}
+            >
+              <Share2 className="w-4 h-4" />
+              {showShareToast ? "Copied!" : "Share Report"}
+            </button>
+            <button
+              onClick={() => window.print()}
+              id="download-report-btn"
+              style={{
+                display: "flex", alignItems: "center", gap: 7,
+                padding: "7px 14px",
+                background: "var(--ws-accent)", border: "none",
+                borderRadius: "var(--ws-radius-sm)",
+                color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer",
+              }}
+            >
+              <Download className="w-4 h-4" />
+              Download PDF
+            </button>
+          </div>
         </div>
       </header>
 
       {/* ── Main content ──────────────────────────────────────────────── */}
-      <div style={{ maxWidth: 1340, margin: "0 auto", padding: "40px 20px" }}>
+      <div className="max-w-[1440px] w-full mx-auto px-4 py-10 md:px-6">
 
         {/* ── Report header ───────────────────────────────────────────── */}
         <motion.div
@@ -139,27 +161,46 @@ export default function ReportPage({ params }: { params: Promise<{ attemptId: st
           transition={{ duration: 0.4 }}
           style={{ marginBottom: 40 }}
         >
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 32 }}>
-            <div>
-              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--ws-ink-3)", marginBottom: 10 }}>
-                Evaluation Report — {new Date(report.generatedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
+          <div style={{ display: "flex", alignItems: "stretch", gap: 24, flexWrap: "wrap" }}>
+            
+            {/* Left Block: Session Overview Card */}
+            <div
+              style={{
+                flex: "1 1 640px",
+                background: "var(--ws-paper-2)",
+                border: "1px solid var(--ws-border-0)",
+                borderRadius: 16,
+                padding: 24,
+                display: "flex",
+                flexDirection: "column",
+                gap: 20,
+                boxShadow: "0 2px 12px rgba(0, 0, 0, 0.02)",
+              }}
+            >
+              {/* Header Title Block */}
+              <div>
+                <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--ws-ink-3)", marginBottom: 8 }}>
+                  Evaluation Report — {new Date(report.generatedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
+                </div>
+                <h1
+                  className="ws-display"
+                  style={{
+                    fontSize: "clamp(24px, 3.5vw, 32px)", fontWeight: 800,
+                    color: "var(--ws-ink-0)", letterSpacing: "-0.03em",
+                    lineHeight: 1.15, marginBottom: 8,
+                  }}
+                >
+                  Software Development Engineer
+                </h1>
+                <p style={{ fontSize: 14, color: "var(--ws-ink-2)", margin: 0 }}>
+                  Fintra Engineering · Platform Infrastructure · Sprint 22 Simulation
+                </p>
               </div>
-              <h1
-                className="ws-display"
-                style={{
-                  fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 800,
-                  color: "var(--ws-ink-0)", letterSpacing: "-0.04em",
-                  lineHeight: 1.1, marginBottom: 12,
-                }}
-              >
-                Software Development Engineer
-              </h1>
-              <p style={{ fontSize: 15, color: "var(--ws-ink-2)", maxWidth: 520 }}>
-                Fintra Engineering · Platform Infrastructure · Sprint 22 Simulation
-              </p>
 
-              {/* Metadata row */}
-              <div style={{ display: "flex", gap: 20, marginTop: 20, flexWrap: "wrap" }}>
+              <div style={{ height: 1, background: "var(--ws-border-0)" }} />
+
+              {/* Metadata Grid */}
+              <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
                 {[
                   { label: "Session ID", value: attemptId.slice(0, 16) + "..." },
                   { label: "Active Time", value: report.activeTimeMs > 0 ? `${Math.round(report.activeTimeMs / 60000)} min` : "—" },
@@ -167,86 +208,116 @@ export default function ReportPage({ params }: { params: Promise<{ attemptId: st
                   { label: "Primary Model", value: "Gemini 1.5" },
                   { label: "Shadow Model", value: "Claude 3" },
                 ].map(item => (
-                  <div key={item.label}>
-                    <div style={{ fontSize: 10, color: "var(--ws-ink-3)", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                  <div key={item.label} style={{ minWidth: 100 }}>
+                    <div style={{ fontSize: 9.5, color: "var(--ws-ink-3)", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}>
                       {item.label}
                     </div>
-                    <div style={{ fontSize: 13, color: "var(--ws-ink-1)", fontFamily: "var(--font-mono)", marginTop: 2 }}>
+                    <div style={{ fontSize: 12.5, color: "var(--ws-ink-1)", fontFamily: "var(--font-mono)", marginTop: 2 }}>
                       {item.value}
                     </div>
                   </div>
                 ))}
               </div>
+
+              <div style={{ height: 1, background: "var(--ws-border-0)" }} />
+
+              {/* Bottom Row: Hiring Recommendation (Left) & Execution Score (Right) */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, flexWrap: "wrap" }}>
+                
+                {/* Hiring Recommendation Details */}
+                <div
+                  style={{
+                    flex: 1,
+                    minWidth: 260,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 16,
+                    padding: "14px 18px",
+                    background: "var(--ws-paper-0)",
+                    border: `1px solid ${band.color}25`,
+                    borderRadius: 12,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 36, height: 36, borderRadius: 8, flexShrink: 0,
+                      background: `${band.color}12`,
+                      border: `1px solid ${band.color}25`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}
+                  >
+                    <HiringBandIcon band={report.hiringRecommendation} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--ws-ink-3)", marginBottom: 2 }}>
+                      Hiring Recommendation
+                    </div>
+                    <div
+                      className="ws-display"
+                      style={{ fontSize: 17, fontWeight: 800, color: band.color, letterSpacing: "-0.02em", marginBottom: 2 }}
+                    >
+                      {band.label}
+                    </div>
+                    <p style={{ fontSize: 12, color: "var(--ws-ink-2)", lineHeight: 1.4, margin: 0 }}>
+                      {band.description}
+                    </p>
+                  </div>
+                  {report.flaggedForHumanReview && (
+                    <div
+                      style={{
+                        display: "flex", alignItems: "center", gap: 4, padding: "4px 8px",
+                        background: "oklch(72% 0.18 76 / 0.12)",
+                        border: "1px solid oklch(72% 0.18 76 / 0.3)",
+                        borderRadius: 4,
+                        marginLeft: "auto",
+                      }}
+                    >
+                      <AlertTriangle className="w-3.5 h-3.5" style={{ color: "var(--ws-warning)" }} />
+                      <span style={{ fontSize: 10.5, fontWeight: 700, color: "oklch(78% 0.16 76)" }}>
+                        Review
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Vertical Divider */}
+                <div style={{ width: 1, height: 60, background: "var(--ws-border-0)", alignSelf: "center" }} className="hidden sm:block" />
+
+                {/* Execution Score Ring Block */}
+                <div style={{ display: "flex", alignItems: "center", gap: 16, paddingRight: 10 }}>
+                  <div style={{ scale: "0.85", transformOrigin: "center" }}>
+                    <ExecutionScoreRing score={report.executionScore} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--ws-ink-3)" }}>
+                      Execution Score
+                    </div>
+                    <div style={{ fontSize: 24, fontWeight: 800, color: "var(--ws-ink-0)", marginTop: 2 }}>
+                      {report.executionScore}<span style={{ fontSize: 14, color: "var(--ws-ink-3)", fontWeight: 500 }}>/100</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
             </div>
 
-            {/* Execution Score ring */}
-            <div style={{ textAlign: "center", flexShrink: 0 }}>
-              <ExecutionScoreRing score={report.executionScore} />
+            {/* Right Block: Competency Radar Map Card */}
+            <div style={{ flex: "1 1 340px", display: "flex", flexDirection: "column", justifyContent: "stretch" }}>
+              <RadarChart11 competencies={report.competencyScores} />
             </div>
+
           </div>
         </motion.div>
 
-        {/* ── Hiring Recommendation band ───────────────────────────────── */}
+        {/* ── Threshold Context ribbon ───────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
           style={{ marginBottom: 32 }}
         >
-          <div
-            style={{
-              padding: "20px 28px",
-              background: "var(--ws-paper-2)",
-              border: `1px solid ${band.color}40`,
-              borderRadius: "var(--ws-radius-lg)",
-              display: "flex", alignItems: "center", gap: 20,
-              boxShadow: `0 0 32px ${band.color}15`,
-            }}
-          >
-            <div
-              style={{
-                width: 48, height: 48, borderRadius: 12, flexShrink: 0,
-                background: `${band.color}20`,
-                border: `1px solid ${band.color}40`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}
-            >
-              <HiringBandIcon band={report.hiringRecommendation} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--ws-ink-3)", marginBottom: 6 }}>
-                Hiring Recommendation
-              </div>
-              <div
-                className="ws-display"
-                style={{ fontSize: 24, fontWeight: 800, color: band.color, letterSpacing: "-0.03em", marginBottom: 6 }}
-              >
-                {band.label}
-              </div>
-              <p style={{ fontSize: 14, color: "var(--ws-ink-2)", lineHeight: 1.5 }}>
-                {band.description}
-              </p>
-            </div>
-            {report.flaggedForHumanReview && (
-              <div
-                style={{
-                  display: "flex", alignItems: "center", gap: 8, padding: "8px 14px",
-                  background: "oklch(72% 0.18 76 / 0.12)",
-                  border: "1px solid oklch(72% 0.18 76 / 0.4)",
-                  borderRadius: "var(--ws-radius-sm)",
-                  flexShrink: 0,
-                }}
-              >
-                <AlertTriangle className="w-4 h-4" style={{ color: "var(--ws-warning)" }} />
-                <span style={{ fontSize: 12, fontWeight: 700, color: "oklch(78% 0.16 76)" }}>
-                  Human Review Recommended
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* Threshold context */}
-          <div style={{ display: "flex", gap: 6, marginTop: 12, alignItems: "center" }}>
+          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
             {(["STRONG_HIRE", "HIRE", "CONSIDER", "NEEDS_DEVELOPMENT", "NOT_READY"] as const).map(b => {
               const isActive = b === report.hiringRecommendation;
               const threshold = HIRING_THRESHOLDS[b];
@@ -329,23 +400,37 @@ export default function ReportPage({ params }: { params: Promise<{ attemptId: st
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.25 }}
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 40 }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10"
         >
-          <div>
-            <SectionHeader label="Key Strengths" />
+          {/* Key Strengths Card */}
+          <div
+            style={{
+              padding: "24px",
+              background: "rgba(16, 185, 129, 0.02)",
+              border: "1px solid rgba(16, 185, 129, 0.12)",
+              borderRadius: 16,
+              boxShadow: "0 4px 20px rgba(16, 185, 129, 0.02)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(16, 185, 129, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "rgb(16, 185, 129)" }}>
+                <CheckCircle className="w-4 h-4" />
+              </div>
+              <h2 className="ws-display" style={{ fontSize: 16, fontWeight: 800, color: "var(--ws-ink-0)", margin: 0 }}>Key Strengths</h2>
+            </div>
+            
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {report.behaviorProfile.strengths.slice(0, 4).map((strength, i) => (
                 <div
                   key={i}
                   style={{
-                    padding: "14px 16px",
+                    padding: "12px 16px",
                     background: "var(--ws-paper-2)",
-                    border: "1px solid oklch(65% 0.18 148 / 0.2)",
-                    borderRadius: "var(--ws-radius-md)",
+                    border: "1px solid rgba(16, 185, 129, 0.08)",
+                    borderRadius: 10,
                     display: "flex", gap: 10, alignItems: "flex-start",
                   }}
                 >
-                  <CheckCircle className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "var(--ws-success)", flexShrink: 0, marginTop: 2 }} />
                   <span style={{ fontSize: 13, color: "var(--ws-ink-1)", lineHeight: 1.5 }}>{strength}</span>
                 </div>
               ))}
@@ -357,21 +442,35 @@ export default function ReportPage({ params }: { params: Promise<{ attemptId: st
             </div>
           </div>
 
-          <div>
-            <SectionHeader label="Improvement Areas" />
+          {/* Improvement Areas Card */}
+          <div
+            style={{
+              padding: "24px",
+              background: "rgba(239, 68, 68, 0.02)",
+              border: "1px solid rgba(239, 68, 68, 0.12)",
+              borderRadius: 16,
+              boxShadow: "0 4px 20px rgba(239, 68, 68, 0.02)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(239, 68, 68, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "rgb(239, 68, 68)" }}>
+                <AlertTriangle className="w-4 h-4" />
+              </div>
+              <h2 className="ws-display" style={{ fontSize: 16, fontWeight: 800, color: "var(--ws-ink-0)", margin: 0 }}>Improvement Areas</h2>
+            </div>
+            
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {report.behaviorProfile.improvementAreas.slice(0, 4).map((area, i) => (
                 <div
                   key={i}
                   style={{
-                    padding: "14px 16px",
+                    padding: "12px 16px",
                     background: "var(--ws-paper-2)",
-                    border: "1px solid oklch(72% 0.18 76 / 0.2)",
-                    borderRadius: "var(--ws-radius-md)",
+                    border: "1px solid rgba(239, 68, 68, 0.08)",
+                    borderRadius: 10,
                     display: "flex", gap: 10, alignItems: "flex-start",
                   }}
                 >
-                  <AlertTriangle className="w-4 h-4 flex-shrink-0" style={{ color: "var(--ws-warning)", flexShrink: 0, marginTop: 2 }} />
                   <span style={{ fontSize: 13, color: "var(--ws-ink-1)", lineHeight: 1.5 }}>{area}</span>
                 </div>
               ))}
@@ -395,21 +494,40 @@ export default function ReportPage({ params }: { params: Promise<{ attemptId: st
             label="Learning Recommendations"
             subtext="Suggested focus areas based on session performance."
           />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {report.behaviorProfile.learningRecommendations.map((rec, i) => (
               <div
                 key={i}
                 style={{
-                  padding: "16px",
+                  padding: "20px",
                   background: "var(--ws-paper-2)",
                   border: "1px solid var(--ws-border-0)",
-                  borderRadius: "var(--ws-radius-md)",
+                  borderRadius: 14,
+                  display: "flex",
+                  gap: 14,
+                  alignItems: "flex-start",
                 }}
               >
-                <div style={{ fontSize: 12, color: "var(--ws-accent-bright)", fontWeight: 700, marginBottom: 6 }}>
-                  #{i + 1}
+                <div 
+                  style={{ 
+                    width: 32, 
+                    height: 32, 
+                    borderRadius: "50%", 
+                    background: "rgba(99, 102, 241, 0.1)", 
+                    border: "1px solid rgba(99, 102, 241, 0.2)",
+                    color: "rgb(99, 102, 241)", 
+                    fontFamily: "var(--font-mono)",
+                    fontSize: 13,
+                    fontWeight: 700, 
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "center",
+                    flexShrink: 0
+                  }}
+                >
+                  {i + 1}
                 </div>
-                <p style={{ fontSize: 13, color: "var(--ws-ink-1)", lineHeight: 1.6, margin: 0 }}>
+                <p style={{ fontSize: 13, color: "var(--ws-ink-1)", lineHeight: 1.6, margin: 0, paddingTop: 3 }}>
                   {rec}
                 </p>
               </div>
@@ -453,7 +571,153 @@ export default function ReportPage({ params }: { params: Promise<{ attemptId: st
           </div>
         </motion.div>
       </div>
+      <ScrollResponsiveFooter />
     </div>
+  );
+}
+
+// ── Scroll Responsive Footer Component ─────────────────────────────────────
+function ScrollResponsiveFooter() {
+  const footerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: footerRef,
+    offset: ["start end", "end end"],
+  });
+
+  // Scroll calculation: Shrinks from oversized (1.5x) down to normal size (1.0x) as user scrolls into footer
+  const scale = useTransform(scrollYProgress, [0, 1], [1.5, 1.0]);
+  const opacity = useTransform(scrollYProgress, [0, 0.4, 1], [0.3, 0.85, 1]);
+  const letterSpacing = useTransform(scrollYProgress, [0, 1], ["-0.02em", "-0.04em"]);
+
+  return (
+    <footer
+      ref={footerRef}
+      style={{
+        borderTop: "1px solid var(--ws-border-0)",
+        background: "var(--ws-paper-1)",
+        padding: "80px 24px 40px",
+        overflow: "hidden",
+        position: "relative",
+        zIndex: 1,
+      }}
+    >
+      {/* Background Subtle Radial Light */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: -150,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: 800,
+          height: 350,
+          background: "radial-gradient(ellipse at center, rgba(124, 58, 237, 0.08) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }}
+      />
+
+      <div style={{ maxWidth: 1340, width: "100%", margin: "0 auto", position: "relative", zIndex: 1 }}>
+        {/* Social Icons Row & Platform Metadata */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 24,
+            marginBottom: 56,
+            paddingBottom: 36,
+            borderBottom: "1px solid var(--ws-border-0)",
+          }}
+        >
+          <div>
+            <div
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: 15,
+                fontWeight: 800,
+                color: "var(--ws-ink-0)",
+                marginBottom: 6,
+                letterSpacing: "-0.01em",
+              }}
+            >
+              HireSapien — Engineering Simulation Center
+            </div>
+            <div style={{ fontSize: 13, color: "var(--ws-ink-2)", fontWeight: 500 }}>
+              Powered by Gemini &amp; Claude • Results stored securely • GDPR-compliant
+            </div>
+          </div>
+
+          {/* Social Icons in a Single Row */}
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            {[
+              { icon: <FaLinkedinIn className="w-5 h-5" />, label: "LinkedIn", href: "https://linkedin.com" },
+              { icon: <FaInstagram className="w-5 h-5" />, label: "Instagram", href: "https://instagram.com" },
+              { icon: <FaWhatsapp className="w-5 h-5" />, label: "WhatsApp", href: "https://whatsapp.com" },
+            ].map(social => (
+              <motion.a
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.12, y: -3 }}
+                whileTap={{ scale: 0.94 }}
+                style={{
+                  width: 46,
+                  height: 46,
+                  borderRadius: 14,
+                  background: "var(--ws-paper-0)",
+                  border: "1px solid var(--ws-border-1)",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.04)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "var(--ws-ink-0)",
+                  textDecoration: "none",
+                  transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                }}
+                className="hover:border-purple-600 hover:text-purple-600 hover:shadow-md hover:shadow-purple-500/10"
+              >
+                {social.icon}
+              </motion.a>
+            ))}
+          </div>
+        </div>
+
+        {/* Scroll-Responsive Enlarged HIRESAPIEN Text */}
+        <motion.div
+          style={{
+            scale,
+            opacity,
+            letterSpacing,
+            transformOrigin: "bottom center",
+            textAlign: "center",
+            userSelect: "none",
+            width: "100%",
+          }}
+        >
+          <h1
+            style={{
+              fontFamily: "var(--font-sans)",
+              fontSize: "clamp(48px, 12.8vw, 190px)",
+              fontWeight: 900,
+              lineHeight: 0.88,
+              textTransform: "uppercase",
+              color: "#000000",
+              margin: 0,
+              display: "block",
+              width: "100%",
+            }}
+          >
+            HIRESAPIEN
+          </h1>
+        </motion.div>
+
+        {/* Bottom Small Copyright */}
+        <div style={{ textAlign: "center", marginTop: 24, fontSize: 12, color: "var(--ws-ink-3)", fontWeight: 600 }}>
+          © {new Date().getFullYear()} HireSapien Inc. All rights reserved.
+        </div>
+      </div>
+    </footer>
   );
 }
 
@@ -508,13 +772,31 @@ function ExecutionScoreRing({ score }: { score: number }) {
         >
           {displayed}
         </div>
-        <div style={{ fontSize: 11, color: "var(--ws-ink-3)", fontWeight: 600, marginTop: 2 }}>
-          / 100
-        </div>
       </div>
     </div>
   );
 }
+
+// ── Evidence Trail Parser ──────────────────────────────────────────────────
+const parseEvidence = (item: string) => {
+  const match = item.match(/^([\+\-\u2212][^\u2014\-]+)[\u2014\-]\s*(.*)$/);
+  const isGain = item.startsWith("+") || item.startsWith("✓");
+  const isLoss = item.startsWith("−") || item.startsWith("-") || item.startsWith("✗");
+  if (match) {
+    return {
+      badge: match[1].trim(),
+      text: match[2].trim(),
+      isGain,
+      isLoss,
+    };
+  }
+  return {
+    badge: null,
+    text: item,
+    isGain,
+    isLoss,
+  };
+};
 
 // ── Competency Row ────────────────────────────────────────────────────────
 
@@ -559,8 +841,8 @@ function CompetencyRow({
           <div
             className="ws-mono"
             style={{
-              fontSize: 10, fontWeight: 700, minWidth: 30, textAlign: "right",
-              color: "var(--ws-ink-3)",
+              fontSize: 10.5, fontWeight: 700, minWidth: 48, textAlign: "right",
+              color: "var(--ws-ink-3)", whiteSpace: "nowrap",
             }}
           >
             {comp.weight}%
@@ -569,7 +851,7 @@ function CompetencyRow({
           {/* Label */}
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 14, fontWeight: 600, color: "var(--ws-ink-0)" }}>
-              {comp.label}
+              {cleanLabels[comp.key] || comp.label}
             </div>
             {comp.aiEvaluated && (
               <div style={{ fontSize: 11, color: "var(--ws-accent-bright)", marginTop: 2 }}>
@@ -612,25 +894,77 @@ function CompetencyRow({
         {isExpanded && comp.evidenceTrail.length > 0 && (
           <div
             style={{
-              padding: "12px 16px 16px",
+              padding: "16px 20px 20px",
               borderTop: "1px solid var(--ws-border-0)",
-              background: "var(--ws-paper-1)",
+              background: "var(--ws-paper-2)",
             }}
           >
-            <div style={{ fontSize: 11, fontWeight: 700, color: "var(--ws-ink-3)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 8 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "var(--ws-ink-3)", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 12 }}>
               Evidence Trail
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {comp.evidenceTrail.map((item, i) => {
-                const isGain = item.startsWith("+") || item.startsWith("✓");
-                const isLoss = item.startsWith("−") || item.startsWith("-") || item.startsWith("✗");
-                const textColor = isGain ? "var(--ws-success)" : isLoss ? "var(--ws-error)" : "var(--ws-ink-1)";
-                const bulletColor = isGain ? "var(--ws-success)" : isLoss ? "var(--ws-error)" : "var(--ws-ink-3)";
+                const parsed = parseEvidence(item);
+                
+                let badgeBg = "rgba(122, 134, 154, 0.1)";
+                let badgeColor = "var(--ws-ink-2)";
+                let badgeBorder = "1px solid rgba(122, 134, 154, 0.15)";
+                
+                if (parsed.isGain) {
+                  badgeBg = "rgba(0, 102, 68, 0.08)";
+                  badgeColor = "var(--ws-success)";
+                  badgeBorder = "1px solid rgba(0, 102, 68, 0.15)";
+                } else if (parsed.isLoss) {
+                  badgeBg = "rgba(222, 53, 11, 0.08)";
+                  badgeColor = "var(--ws-error)";
+                  badgeBorder = "1px solid rgba(222, 53, 11, 0.15)";
+                }
 
                 return (
-                  <div key={i} style={{ fontSize: 13, color: textColor, display: "flex", gap: 8, alignItems: "flex-start", lineHeight: 1.5 }}>
-                    <span style={{ color: bulletColor, fontWeight: 700 }}>{isGain ? "✓" : isLoss ? "✗" : "→"}</span>
-                    <span>{item}</span>
+                  <div 
+                    key={i} 
+                    style={{ 
+                      display: "flex", 
+                      gap: 12, 
+                      alignItems: "flex-start", 
+                      lineHeight: 1.5,
+                      padding: "8px 12px",
+                      background: "var(--ws-paper-0)",
+                      border: "1px solid var(--ws-border-0)",
+                      borderRadius: 8,
+                    }}
+                  >
+                    {parsed.isGain ? (
+                      <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+                    ) : parsed.isLoss ? (
+                      <XCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+                    ) : (
+                      <AlertTriangle className="w-4 h-4 text-slate-500 flex-shrink-0 mt-0.5" />
+                    )}
+                    
+                    <div style={{ flex: 1, display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10 }}>
+                      {parsed.badge && (
+                        <span 
+                          className="ws-mono"
+                          style={{ 
+                            fontSize: 11, 
+                            fontWeight: 700, 
+                            padding: "2px 8px", 
+                            borderRadius: 4, 
+                            background: badgeBg, 
+                            color: badgeColor,
+                            border: badgeBorder,
+                            display: "inline-block",
+                            whiteSpace: "nowrap"
+                          }}
+                        >
+                          {parsed.badge}
+                        </span>
+                      )}
+                      <span style={{ fontSize: 13, color: "var(--ws-ink-1)" }}>
+                        {parsed.text}
+                      </span>
+                    </div>
                   </div>
                 );
               })}
@@ -638,8 +972,13 @@ function CompetencyRow({
             {comp.shadowScore !== undefined && (
               <div
                 style={{
-                  marginTop: 10, fontSize: 12, color: "var(--ws-ink-3)",
+                  marginTop: 14, fontSize: 12, color: "var(--ws-ink-3)",
                   fontFamily: "var(--font-mono)",
+                  background: "var(--ws-paper-0)",
+                  padding: "8px 12px",
+                  borderRadius: 6,
+                  border: "1px solid var(--ws-border-0)",
+                  display: "inline-block",
                 }}
               >
                 Primary (Gemini): {comp.score} · Shadow (Claude): {comp.shadowScore}
@@ -733,6 +1072,165 @@ function ErrorState({ error }: { error: string }) {
       <div style={{ textAlign: "center" }}>
         <XCircle className="w-12 h-12" style={{ color: "var(--ws-error)", margin: "0 auto 16px" }} />
         <p style={{ fontSize: 15, color: "var(--ws-ink-2)" }}>{error}</p>
+      </div>
+    </div>
+  );
+}
+
+// ── SDE Competency Radar Chart Component ───────────────────────────────────
+const sdeIconMap: Record<string, React.ElementType> = {
+  RequirementUnderstanding: FileText,
+  EngineeringPlanning: Calendar,
+  CodebaseNavigation: FolderOpen,
+  InvestigationDebugging: Search,
+  FeatureImplementation: Code2,
+  APIAndDatabaseIntegration: Database,
+  TestingAndQuality: ShieldCheck,
+  Productivity: Clock,
+  AICollaboration: Sparkles,
+  EngineeringBehavior: User,
+  DeliveryExcellence: Trophy,
+};
+
+function RadarChart11({ competencies }: { competencies: ICompetencyScore[] }) {
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+  const cx = 130, cy = 130, r = 85;
+  const n = competencies.length;
+  const angleStep = (2 * Math.PI) / n;
+
+  const getPoint = (idx: number, scoreRadius: number) => {
+    const angle = idx * angleStep - Math.PI / 2;
+    return {
+      x: cx + scoreRadius * Math.cos(angle),
+      y: cy + scoreRadius * Math.sin(angle),
+    };
+  };
+
+  const gridLevels = [0.25, 0.5, 0.75, 1];
+  const hoveredData = hoveredIdx !== null ? competencies[hoveredIdx] : null;
+  const HoveredIcon = hoveredData ? (sdeIconMap[hoveredData.key] || Target) : null;
+
+  // Radar polygon path
+  const polygonPath = competencies.map((c, i) => {
+    const pt = getPoint(i, (c.score / 100) * r);
+    return `${i === 0 ? "M" : "L"} ${pt.x} ${pt.y}`;
+  }).join(" ") + " Z";
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", background: "var(--ws-paper-2)", border: "1px solid var(--ws-border-1)", borderRadius: 16, padding: 20, position: "relative" }}>
+      <div style={{ fontSize: 13, fontWeight: 700, color: "var(--ws-ink-0)", marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.04em" }}>
+        Competency Radar Map
+      </div>
+
+      <div style={{ position: "relative", width: 260, height: 260 }}>
+        <svg viewBox="0 0 260 260" style={{ width: "100%", height: "100%", overflow: "visible" }}>
+          {/* Grid lines */}
+          {gridLevels.map((level, li) => {
+            const pts = Array.from({ length: n }, (_, idx) => getPoint(idx, level * r));
+            const path = pts.map((p, pi) => `${pi === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ") + " Z";
+            return (
+              <path
+                key={li}
+                d={path}
+                fill="none"
+                stroke="var(--ws-border-0)"
+                strokeWidth="0.8"
+                strokeDasharray={li < 3 ? "2,2" : "none"}
+              />
+            );
+          })}
+
+          {/* Axis lines */}
+          {competencies.map((_, i) => {
+            const pt = getPoint(i, r);
+            return (
+              <line
+                key={i}
+                x1={cx}
+                y1={cy}
+                x2={pt.x}
+                y2={pt.y}
+                stroke="var(--ws-border-1)"
+                strokeWidth="0.8"
+              />
+            );
+          })}
+
+          {/* Filled Radar Area */}
+          <path
+            d={polygonPath}
+            fill="rgba(99, 102, 241, 0.15)"
+            stroke="var(--ws-accent)"
+            strokeWidth="1.8"
+          />
+
+          {/* Interactive vertex circles */}
+          {competencies.map((c, i) => {
+            const pt = getPoint(i, (c.score / 100) * r);
+            const isHovered = hoveredIdx === i;
+            return (
+              <g key={i}>
+                <circle
+                  cx={pt.x}
+                  cy={pt.y}
+                  r={isHovered ? 6 : 4}
+                  fill={isHovered ? "var(--ws-accent)" : "var(--ws-paper-1)"}
+                  stroke="var(--ws-accent)"
+                  strokeWidth="1.5"
+                  style={{ cursor: "pointer", transition: "all 0.1s" }}
+                  onMouseEnter={() => setHoveredIdx(i)}
+                  onMouseLeave={() => setHoveredIdx(null)}
+                />
+              </g>
+            );
+          })}
+
+          {/* Axis Labels */}
+          {competencies.map((c, i) => {
+            const pt = getPoint(i, r + 15);
+            return (
+              <text
+                key={i}
+                x={pt.x}
+                y={pt.y}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                style={{ fontSize: 9, fontWeight: 700, fill: "var(--ws-ink-3)", userSelect: "none" }}
+              >
+                {i + 1}
+              </text>
+            );
+          })}
+        </svg>
+      </div>
+
+      {/* Legend & Hover Tooltip details card */}
+      <div style={{ marginTop: 16, width: "100%", minHeight: 70, borderTop: "1px solid var(--ws-border-0)", paddingTop: 12 }}>
+        {hoveredData && HoveredIcon ? (
+          <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+            <div style={{ width: 28, height: 28, borderRadius: 6, background: "var(--ws-accent-dim)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--ws-accent)", flexShrink: 0 }}>
+              <HoveredIcon className="w-4 h-4" />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ fontSize: 13, fontWeight: 750, color: "var(--ws-ink-0)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {hoveredIdx! + 1}. {hoveredData.label}
+                </span>
+                <span style={{ fontSize: 12, fontWeight: 800, color: "var(--ws-accent)", flexShrink: 0 }}>
+                  {hoveredData.score}/100
+                </span>
+              </div>
+              <p style={{ fontSize: 11, color: "var(--ws-ink-2)", margin: "4px 0 0 0", lineHeight: 1.4 }}>
+                {hoveredData.description || "Demonstrated proficiency during the development scenario."}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div style={{ fontSize: 11.5, color: "var(--ws-ink-3)", textAlign: "center", padding: "10px 0" }}>
+            💡 Hover over the nodes (1–11) to view score and competency details.
+          </div>
+        )}
       </div>
     </div>
   );

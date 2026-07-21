@@ -22,7 +22,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "HireSapien — Experience Engineering Before You're Hired",
   description:
-    "AI-powered Engineering Assessment Center. Drop candidates into realistic engineering workspaces and evaluate what matters: execution. Not knowledge.",
+    "AI-powered Engineering Stimulation Center. Drop candidates into realistic engineering workspaces and evaluate what matters: execution. Not knowledge.",
   icons: {
     icon: "/image-removebg-preview (1).png",
   },
