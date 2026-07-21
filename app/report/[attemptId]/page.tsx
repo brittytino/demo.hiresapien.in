@@ -1092,6 +1092,20 @@ const sdeIconMap: Record<string, React.ElementType> = {
   DeliveryExcellence: Trophy,
 };
 
+const competencyDescriptions: Record<string, string> = {
+  RequirementUnderstanding: "Measures scroll depth, document inspection, and reading time spent analyzing specifications.",
+  EngineeringPlanning: "Evaluates task estimation, prioritization, and sprint backlog ordering correctness.",
+  CodebaseNavigation: "Tracks active file exploration, search queries, and code path navigation.",
+  InvestigationDebugging: "Measures error log analysis, Grafana telemetry inspections, and bug verification.",
+  FeatureImplementation: "Assesses execution speed, code changes correctness, and feature completeness.",
+  APIAndDatabaseIntegration: "Evaluates correct usage of endpoints, connection wrappers, and database models.",
+  TestingAndQuality: "Measures unit tests run, coverage validation, and regression checks.",
+  Productivity: "Evaluates overall efficiency, context switching metrics, and key-press stats.",
+  AICollaboration: "Measures quality of prompts, comments, and instructions given to AI sub-agents.",
+  EngineeringBehavior: "Evaluates professional practices, coding discipline, and diagnostic behaviors.",
+  DeliveryExcellence: "Combines overall task delivery score, solution quality, and compliance metrics.",
+};
+
 function RadarChart11({ competencies }: { competencies: ICompetencyScore[] }) {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
@@ -1222,7 +1236,7 @@ function RadarChart11({ competencies }: { competencies: ICompetencyScore[] }) {
                 </span>
               </div>
               <p style={{ fontSize: 11, color: "var(--ws-ink-2)", margin: "4px 0 0 0", lineHeight: 1.4 }}>
-                {hoveredData.description || "Demonstrated proficiency during the development scenario."}
+                {competencyDescriptions[hoveredData.key] || "Demonstrated proficiency during the development scenario."}
               </p>
             </div>
           </div>
