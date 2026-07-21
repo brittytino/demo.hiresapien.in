@@ -1,0 +1,452 @@
+{
+  "assessment": {
+    "name": "Fintra Analytics Lab",
+    "version": "HireSapien v2.0",
+    "company": "Fintra",
+    "role": "Junior Data Analyst",
+    "context": "Fintra is one of India's growing e-commerce platforms. Over the past quarter, revenue has declined by 18%, while customer complaints have increased by 12%. You are a Junior Data Analyst working under Priya Sharma (Analytics Lead). Your mission is to discover what's happening before the Executive Board meeting.",
+    "competencies": {
+      "ProblemFraming": 15,
+      "DataLiteracy": 20,
+      "AnalyticalReasoning": 15,
+      "RootCauseAnalysis": 15,
+      "Prioritization": 10,
+      "BusinessThinking": 10,
+      "DataQualityAwareness": 5,
+      "Communication": 10
+    },
+    "missions": [
+      {
+        "id": "mission-3",
+        "title": "🔍 Mission 3: Follow the Clues",
+        "context": "You narrowed the issue to conversions. Now identify WHO is experiencing the biggest problem.\n\nPriya remarks:\n\"Revenue doesn't disappear randomly. Some customer segment is struggling. Find it.\"",
+        "objectives": [
+          "Identify the struggling customer segment."
+        ],
+        "successCriteria": [
+          "Compare segment drops",
+          "Identify outliers",
+          "Verify data consistency"
+        ],
+        "tasks": [
+          {
+            "id": "task-3-1",
+            "type": "SingleSelect",
+            "question": "Inspect each customer segment. Choose the one requiring immediate investigation.",
+            "options": [
+              "New Customers",
+              "Returning Customers",
+              "Premium Customers",
+              "Mobile App Users"
+            ],
+            "correctAnswer": "Mobile App Users",
+            "competencies": [
+              "DataLiteracy",
+              "AnalyticalReasoning"
+            ],
+            "maxScore": 20,
+            "xpReward": 150,
+            "coachingFeedback": "Evidence Found:\n\nMobile App Users\nConversion: 8.5% → 4.7%\n\nYou uncovered your first major clue!\n\n+150 XP\n\nData Literacy +15\nAnalytical Reasoning +20"
+          },
+          {
+            "id": "task-3-2",
+            "type": "Ranking",
+            "question": "Priya asks: \"Since resources are tight, rank our next segment investigation paths in order of importance.\"",
+            "items": [
+              "Mobile App Experience",
+              "Checkout Process",
+              "Customer Feedback",
+              "Marketing Campaign Performance"
+            ],
+            "correctAnswer": [
+              "Mobile App Experience",
+              "Checkout Process",
+              "Customer Feedback",
+              "Marketing Campaign Performance"
+            ],
+            "competencies": [
+              "Prioritization",
+              "ProblemFraming"
+            ],
+            "maxScore": 20,
+            "xpReward": 150,
+            "coachingFeedback": "Perfect prioritization!\n\nAnalyzing app usability and checkout flows gets us closest to the user's frustration points.\n\n+150 XP\n\nPrioritization +15\nProblem Framing +10"
+          },
+          {
+            "id": "task-3-3",
+            "type": "MultiSelect",
+            "question": "Priya asks: \"Identify the findings from our segment query that are solid facts, not guesses.\"",
+            "options": [
+              "Mobile conversion rate decreased from 8.5% to 4.7%",
+              "Premium customer conversion remained relatively stable",
+              "Revenue decline is concentrated within one customer segment",
+              "Website traffic remained relatively stable"
+            ],
+            "correctAnswer": [
+              "Mobile conversion rate decreased from 8.5% to 4.7%",
+              "Revenue decline is concentrated within one customer segment"
+            ],
+            "competencies": [
+              "AnalyticalReasoning",
+              "RootCauseAnalysis"
+            ],
+            "maxScore": 20,
+            "xpReward": 150,
+            "coachingFeedback": "Great job distinguishing facts!\n\nBasing analysis strictly on proven segment trends prevents bias.\n\n+150 XP\n\nRoot Cause Analysis +15\nAnalytical Reasoning +10"
+          }
+        ]
+      },
+      {
+        "id": "mission-4",
+        "title": "🚚 Mission 4: Investigate Operations",
+        "context": "You inform Operations. Minutes later, a logistics report arrives. Now determine whether delivery performance explains what happened.",
+        "objectives": [
+          "Connect customer behavior with operational performance."
+        ],
+        "successCriteria": [
+          "Evaluate delivery metrics",
+          "Identify performance bottlenecks",
+          "Determine customer impacts"
+        ],
+        "tasks": [
+          {
+            "id": "task-4-1",
+            "type": "SingleSelect",
+            "question": "Highlight the strongest evidence supporting your hypothesis that shipping issues drive cancels.",
+            "options": [
+              "On-Time Delivery Rate",
+              "Average Delivery Time",
+              "Delivery Complaints",
+              "Order Cancellation Rate"
+            ],
+            "correctAnswer": "Order Cancellation Rate",
+            "competencies": [
+              "DataLiteracy",
+              "RootCauseAnalysis"
+            ],
+            "maxScore": 20,
+            "xpReward": 160,
+            "coachingFeedback": "Excellent analysis!\n\nOperational delays are causing customers to cancel orders. This directly impacts app conversions.\n\n+160 XP\n\nRoot Cause Analysis +15\nData Literacy +10"
+          },
+          {
+            "id": "task-4-2",
+            "type": "MultiSelect",
+            "question": "Priya asks: \"Which specific delivery statistics verify that delivery quality has plummeted? Select the TWO strongest facts.\"",
+            "options": [
+              "On-Time Delivery Rate dropped from 94% to 81%",
+              "Delivery Complaints increased from 1,250 to 3,420",
+              "Website visits decreased slightly",
+              "Revenue decreased by 18%"
+            ],
+            "correctAnswer": [
+              "On-Time Delivery Rate dropped from 94% to 81%",
+              "Delivery Complaints increased from 1,250 to 3,420"
+            ],
+            "competencies": [
+              "RootCauseAnalysis",
+              "AnalyticalReasoning"
+            ],
+            "maxScore": 20,
+            "xpReward": 160,
+            "coachingFeedback": "Robust evidence!\n\nThe drop in on-time delivery rate alongside a spike in complaints clearly highlights operational strain.\n\n+160 XP\n\nRoot Cause Analysis +20\nAnalytical Reasoning +10"
+          },
+          {
+            "id": "task-4-3",
+            "type": "Slider",
+            "question": "Based on the delivery data, how confident are you (0–100) that delivery performance issues are a primary driver of the conversion decline?",
+            "range": [
+              0,
+              100
+            ],
+            "correctRange": [
+              75,
+              100
+            ],
+            "competencies": [
+              "AnalyticalReasoning",
+              "DataLiteracy"
+            ],
+            "maxScore": 20,
+            "xpReward": 160,
+            "coachingFeedback": "Highly confident, and rightly so!\n\nThe correlation between late deliveries, app cancellations, and app conversion declines is extremely strong.\n\n+160 XP\n\nAnalytical Reasoning +15\nData Literacy +10"
+          }
+        ]
+      },
+      {
+        "id": "mission-5",
+        "title": "💬 Mission 5: Listen to the Customer",
+        "context": "Numbers explain WHAT happened. Customers explain WHY it happened.\n\nRead support tickets. Identify recurring themes.",
+        "objectives": [
+          "Read support tickets to uncover operational frictions."
+        ],
+        "successCriteria": [
+          "Identify core qualitative themes",
+          "Synthesize support tickets",
+          "Correlate complaints with metrics"
+        ],
+        "tasks": [
+          {
+            "id": "task-5-1",
+            "type": "MultiSelect",
+            "question": "Which themes appear most frequently in the customer support tickets? Pick the TWO recurring issues.",
+            "options": [
+              "Late Delivery",
+              "Product Quality Issues",
+              "Slow Shipping",
+              "Pricing Concerns",
+              "Communication Issues",
+              "Bad App"
+            ],
+            "correctAnswer": [
+              "Late Delivery",
+              "Communication Issues"
+            ],
+            "competencies": [
+              "RootCauseAnalysis",
+              "DataLiteracy"
+            ],
+            "maxScore": 20,
+            "xpReward": 150,
+            "coachingFeedback": "Insight Unlocked!\n\nCustomers repeatedly mention Late Delivery and Poor Shipping Updates.\n\n+150 XP\n\nRoot Cause Analysis +15\nData Literacy +15"
+          },
+          {
+            "id": "task-5-2",
+            "type": "Ranking",
+            "question": "Priya requests: \"Rank these candidate mitigation tasks from highest priority to lowest priority based on user feedback.\"",
+            "items": [
+              "Improve Delivery Performance",
+              "Improve Delivery Communication",
+              "Launch New Marketing Campaign",
+              "Expand Product Catalog"
+            ],
+            "correctAnswer": [
+              "Improve Delivery Performance",
+              "Improve Delivery Communication",
+              "Launch New Marketing Campaign",
+              "Expand Product Catalog"
+            ],
+            "competencies": [
+              "Prioritization",
+              "BusinessThinking"
+            ],
+            "maxScore": 20,
+            "xpReward": 150,
+            "coachingFeedback": "Excellent strategy!\n\nFixing late shipments and status updates satisfies the core customer complaints immediately.\n\n+150 XP\n\nPrioritization +15\nBusiness Thinking +10"
+          }
+        ]
+      },
+      {
+        "id": "mission-6",
+        "title": "🧹 Mission 6: Audit the Evidence",
+        "context": "Before presenting findings to executives... Verify your data. Even one incorrect record can mislead the entire company.",
+        "objectives": [
+          "Spot bad records and clean the dataset."
+        ],
+        "successCriteria": [
+          "Detect calculation anomalies",
+          "Identify missing records",
+          "Maintain reporting integrity"
+        ],
+        "tasks": [
+          {
+            "id": "task-6-1",
+            "type": "MultiSelect",
+            "question": "Review each order row below. Mark the suspicious entries containing corrupt metrics.",
+            "options": [
+              "ORD-1001",
+              "ORD-1002",
+              "ORD-1003",
+              "ORD-1004",
+              "ORD-1005"
+            ],
+            "correctAnswer": [
+              "ORD-1002",
+              "ORD-1004"
+            ],
+            "competencies": [
+              "DataQualityAwareness",
+              "DataLiteracy"
+            ],
+            "maxScore": 20,
+            "xpReward": 150,
+            "coachingFeedback": "Sharp eyes!\n\nORD-1002 has 'N/A' days (corrupt string), and ORD-1004 has negative days (-2 days), which is impossible.\n\n+150 XP\n\nData Quality Awareness +20\nData Literacy +10"
+          },
+          {
+            "id": "task-6-2",
+            "type": "SingleSelect",
+            "question": "Before presenting findings to leadership, what should the Analytics Team do to fix these records?",
+            "options": [
+              "Ignore minor inconsistencies and proceed.",
+              "Validate and clean questionable records before finalizing conclusions.",
+              "Remove all delivery records.",
+              "Focus only on customer feedback."
+            ],
+            "correctAnswer": "Validate and clean questionable records before finalizing conclusions.",
+            "competencies": [
+              "DataQualityAwareness",
+              "BusinessThinking"
+            ],
+            "maxScore": 20,
+            "xpReward": 150,
+            "coachingFeedback": "Correct standard protocol!\n\nCleaning and validating the dataset ensures stakeholders trust the insights and reports.\n\n+150 XP\n\nData Quality Awareness +15\nBusiness Thinking +10"
+          }
+        ]
+      },
+      {
+        "id": "mission-7",
+        "title": "🤝 Mission 7: Boardroom Debate",
+        "context": "Each department believes they're right:\n• Operations: \"We need logistics.\"\n• Marketing: \"We need more customers.\"\n• Finance: \"We need cost reduction.\"\n• Product: \"We need redesign.\"\n\nRecommend where the company should invest first.",
+        "objectives": [
+          "Recommend where the company should invest first."
+        ],
+        "successCriteria": [
+          "Evaluate stakeholder constraints",
+          "Prioritize resource allocation",
+          "Align actions with findings"
+        ],
+        "tasks": [
+          {
+            "id": "task-7-1",
+            "type": "Ranking",
+            "question": "Rank the following initiatives from highest priority to lowest priority based on the investigation findings.",
+            "items": [
+              "Improve Delivery Performance",
+              "Improve Mobile App Experience",
+              "Increase Marketing Campaigns",
+              "Reduce Operational Spending"
+            ],
+            "correctAnswer": [
+              "Improve Delivery Performance",
+              "Improve Mobile App Experience",
+              "Increase Marketing Campaigns",
+              "Reduce Operational Spending"
+            ],
+            "competencies": [
+              "Prioritization",
+              "BusinessThinking"
+            ],
+            "maxScore": 20,
+            "xpReward": 180,
+            "coachingFeedback": "Board Decision:\n\nYour recommendation matches the Operations team's findings.\n\nLeadership Confidence: 92%!\n\n+180 XP\n\nPrioritization +20\nBusiness Thinking +15"
+          },
+          {
+            "id": "task-7-2",
+            "type": "SingleSelect",
+            "question": "Which stakeholder recommendation is most strongly supported by the investigation?",
+            "options": [
+              "Marketing Team",
+              "Finance Team",
+              "Operations Team",
+              "Human Resources Team"
+            ],
+            "correctAnswer": "Operations Team",
+            "competencies": [
+              "BusinessThinking",
+              "AnalyticalReasoning"
+            ],
+            "maxScore": 20,
+            "xpReward": 180,
+            "coachingFeedback": "Spot on!\n\nFixing shipping bottlenecks directly addresses the root causes of app cancellation spikes and revenue drops.\n\n+180 XP\n\nBusiness Thinking +15\nAnalytical Reasoning +15"
+          },
+          {
+            "id": "task-7-3",
+            "type": "Slider",
+            "question": "You have 100 project points available. How many points would you allocate to Improve Delivery Performance (0–100)?",
+            "range": [
+              0,
+              100
+            ],
+            "correctRange": [
+              35,
+              45
+            ],
+            "competencies": [
+              "Prioritization",
+              "BusinessThinking"
+            ],
+            "maxScore": 20,
+            "xpReward": 180,
+            "coachingFeedback": "Balanced score!\n\nAllocating ~40% to logistics resolves the core bottleneck while keeping budget open for app enhancements.\n\n+180 XP\n\nPrioritization +15\nBusiness Thinking +15"
+          }
+        ]
+      },
+      {
+        "id": "mission-8",
+        "title": "👑 Final Mission: Present to the CEO",
+        "context": "The board is waiting. Summarize everything you've learned. Recommend the next steps.",
+        "objectives": [
+          "Deliver an executive recommendation."
+        ],
+        "successCriteria": [
+          "Synthesize key evidence",
+          "Draft business directives",
+          "Deliver brief summaries"
+        ],
+        "tasks": [
+          {
+            "id": "task-8-1",
+            "type": "SingleSelect",
+            "question": "Executive Summary: Complete the investigation. Select the conclusion best supported by evidence.",
+            "options": [
+              "Revenue declined primarily because website traffic decreased significantly.",
+              "The investigation indicates that delivery performance issues are contributing to lower conversion rates among Mobile App Users.",
+              "The investigation indicates that product quality concerns are driving customer dissatisfaction.",
+              "The investigation was unable to identify a likely cause."
+            ],
+            "correctAnswer": "The investigation indicates that delivery performance issues are contributing to lower conversion rates among Mobile App Users.",
+            "competencies": [
+              "Communication",
+              "BusinessThinking"
+            ],
+            "maxScore": 20,
+            "xpReward": 200,
+            "coachingFeedback": "Excellent conclusion!\n\nThis captures the complete logic flow of the problem from app users to cancellation rates to shipping bottlenecks.\n\n+200 XP\n\nCommunication +15\nBusiness Thinking +15"
+          },
+          {
+            "id": "task-8-2",
+            "type": "Ranking",
+            "question": "Arrange the following actions in the order they should be implemented.",
+            "items": [
+              "Improve Delivery Performance",
+              "Improve Delivery Communication",
+              "Optimize Mobile App Experience",
+              "Launch New Marketing Campaigns"
+            ],
+            "correctAnswer": [
+              "Improve Delivery Performance",
+              "Improve Delivery Communication",
+              "Optimize Mobile App Experience",
+              "Launch New Marketing Campaigns"
+            ],
+            "competencies": [
+              "Prioritization",
+              "BusinessThinking"
+            ],
+            "maxScore": 20,
+            "xpReward": 200,
+            "coachingFeedback": "Flawless roadmap!\n\nFirst fix the engine (deliveries), then instrument dashboards (comms), polish app UI, and finally market to new users.\n\n+200 XP\n\nPrioritization +20\nBusiness Thinking +15"
+          },
+          {
+            "id": "task-8-3",
+            "type": "SingleSelect",
+            "question": "Which recommendation should be presented to the CEO?",
+            "options": [
+              "Increase customer acquisition spending immediately.",
+              "Reduce logistics investment to lower costs.",
+              "Prioritize resolving delivery performance issues before investing in growth initiatives.",
+              "Delay all business actions until additional data becomes available."
+            ],
+            "correctAnswer": "Prioritize resolving delivery performance issues before investing in growth initiatives.",
+            "competencies": [
+              "BusinessThinking",
+              "Communication"
+            ],
+            "maxScore": 20,
+            "xpReward": 200,
+            "coachingFeedback": "Congratulations!\n\nYou successfully delivered the Executive Recommendation to the CEO before the board meeting!\n\nThe board has approved the budget for logistics refinement.\n\n+200 XP\n\nBusiness Thinking +20\nCommunication +15"
+          }
+        ]
+      }
+    ]
+  }
+}

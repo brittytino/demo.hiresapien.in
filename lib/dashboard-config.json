@@ -1,0 +1,24 @@
+{
+  "proctoring": {
+    "maxWarnings": 3,
+    "blockCopyPaste": true,
+    "forceFullscreen": true,
+    "trackTabSwitches": true
+  },
+  "competencies": {
+    "ProblemFraming": 15,
+    "DataLiteracy": 15,
+    "AnalyticalReasoning": 15,
+    "RootCauseAnalysis": 10,
+    "Prioritization": 10,
+    "BusinessThinking": 15,
+    "DataQualityAwareness": 10,
+    "Communication": 10
+  },
+  "thresholds": {
+    "explorer": 40,
+    "emerging": 60,
+    "readyFoundation": 80,
+    "ready": 100
+  }
+}
