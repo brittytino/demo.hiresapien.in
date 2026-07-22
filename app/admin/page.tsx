@@ -185,12 +185,43 @@ export default function InstitutionalDashboard() {
   };
 
   // ── DATA COMPUTATIONS & METRICS ──────────────────────────────────────────
+  // Cohort candidates filtered by active selectors (excluding search query to keep cohort stats stable)
+  const cohortCandidates = useMemo(() => {
+    return candidates.filter((c) => {
+      const matchesReadiness =
+        filterReadiness === "All" ||
+        c.result?.readinessLevel === filterReadiness;
+
+      const matchesDegree =
+        filterDegree === "All" || c.degree === filterDegree;
+
+      const matchesStatus =
+        filterStatus === "All" || c.status === filterStatus;
+
+      const matchesArchetype =
+        filterArchetype === "All" ||
+        c.result?.archetype === filterArchetype;
+
+      const matchesRole =
+        filterRole === "All" || c.role === filterRole;
+
+      return (
+        matchesReadiness &&
+        matchesDegree &&
+        matchesStatus &&
+        matchesArchetype &&
+        matchesRole
+      );
+    });
+  }, [candidates, filterReadiness, filterDegree, filterStatus, filterArchetype, filterRole]);
+
+  // ── DATA COMPUTATIONS & METRICS ──────────────────────────────────────────
   const metrics = useMemo(() => {
-    const total = candidates.length;
-    const completedAttempts = candidates.filter(c => c.status === "COMPLETED");
+    const total = cohortCandidates.length;
+    const completedAttempts = cohortCandidates.filter(c => c.status === "COMPLETED");
     const completedCount = completedAttempts.length;
-    const inProgressCount = candidates.filter(c => c.status === "IN_PROGRESS").length;
-    const terminatedCount = candidates.filter(c => c.status === "TERMINATED").length;
+    const inProgressCount = cohortCandidates.filter(c => c.status === "IN_PROGRESS").length;
+    const terminatedCount = cohortCandidates.filter(c => c.status === "TERMINATED").length;
 
     const completionRate = total > 0 ? Math.round((completedCount / (total - inProgressCount)) * 100) : 0;
     
@@ -200,10 +231,10 @@ export default function InstitutionalDashboard() {
       : 0;
 
     // Total violations
-    const totalWarnings = candidates.reduce((acc, curr) => acc + (curr.warningCount || 0), 0);
+    const totalWarnings = cohortCandidates.reduce((acc, curr) => acc + (curr.warningCount || 0), 0);
     
     // Integrity rate (percent of candidates with 0 warnings)
-    const compliantCount = candidates.filter(c => (c.warningCount || 0) === 0).length;
+    const compliantCount = cohortCandidates.filter(c => (c.warningCount || 0) === 0).length;
     const integrityRate = total > 0 ? Math.round((compliantCount / total) * 1000) / 10 : 100;
 
     // Average duration (mock simulation is 12-21 mins, real ones can vary)
@@ -236,41 +267,17 @@ export default function InstitutionalDashboard() {
       allDegrees,
       allArchetypes,
     };
-  }, [candidates]);
+  }, [cohortCandidates, candidates]);
 
   // Filters candidates based on search query, tags, and sidebar configurations
   const filteredCandidates = useMemo(() => {
-    return candidates
+    return cohortCandidates
       .filter((c) => {
         const matchesSearch =
           c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           c.email.toLowerCase().includes(searchQuery.toLowerCase());
 
-        const matchesReadiness =
-          filterReadiness === "All" ||
-          c.result?.readinessLevel === filterReadiness;
-
-        const matchesDegree =
-          filterDegree === "All" || c.degree === filterDegree;
-
-        const matchesStatus =
-          filterStatus === "All" || c.status === filterStatus;
-
-        const matchesArchetype =
-          filterArchetype === "All" ||
-          c.result?.archetype === filterArchetype;
-
-        const matchesRole =
-          filterRole === "All" || c.role === filterRole;
-
-        return (
-          matchesSearch &&
-          matchesReadiness &&
-          matchesDegree &&
-          matchesStatus &&
-          matchesArchetype &&
-          matchesRole
-        );
+        return matchesSearch;
       })
       .sort((a, b) => {
         let valA: any = a.name;
@@ -291,7 +298,7 @@ export default function InstitutionalDashboard() {
         if (valA > valB) return sortOrder === "asc" ? 1 : -1;
         return 0;
       });
-  }, [candidates, searchQuery, filterReadiness, filterDegree, filterStatus, filterArchetype, sortBy, sortOrder]);
+  }, [cohortCandidates, searchQuery, sortBy, sortOrder]);
 
   // ── CHART DATA GENERATORS ────────────────────────────────────────────────
   const chartsData = useMemo(() => {
@@ -303,7 +310,7 @@ export default function InstitutionalDashboard() {
       "Explorer": 0,
     };
     
-    candidates.forEach(c => {
+    cohortCandidates.forEach(c => {
       if (c.result?.readinessLevel && readinessMap[c.result.readinessLevel] !== undefined) {
         readinessMap[c.result.readinessLevel]++;
       }
@@ -326,7 +333,7 @@ export default function InstitutionalDashboard() {
 
     // 2. Score Trends Over Time Chart (Grouping by date)
     const datesMap: Record<string, { count: number; totalScore: number }> = {};
-    candidates.forEach((c) => {
+    cohortCandidates.forEach((c) => {
       const dateStr = new Date(c.createdAt || c.startedAt).toLocaleDateString(undefined, {
         month: "short",
         day: "numeric",
@@ -351,7 +358,7 @@ export default function InstitutionalDashboard() {
       .reverse();
 
     // 3. Competency Cohort Averages Chart
-    const completedAttempts = candidates.filter(c => c.status === "COMPLETED");
+    const completedAttempts = cohortCandidates.filter(c => c.status === "COMPLETED");
     const competencyAverages: Record<string, number> = {};
     const competencyCounts: Record<string, number> = {};
 
@@ -371,8 +378,10 @@ export default function InstitutionalDashboard() {
         competencyAverages[comp] = Math.round(competencyAverages[comp] / competencyCounts[comp]);
       });
     } else {
-      // Fallback defaults
-      const defaults = ["AnalyticalReasoning", "DataLiteracy", "Prioritization", "BusinessThinking", "Communication"];
+      // Fallback defaults based on role selection
+      const defaults = filterRole === "sde"
+        ? ["RequirementUnderstanding", "EngineeringPlanning", "CodebaseNavigation", "InvestigationDebugging", "FeatureImplementation", "TestingAndQuality", "EngineeringCommunication", "DeliveryExcellence"]
+        : ["AnalyticalReasoning", "DataLiteracy", "Prioritization", "BusinessThinking", "Communication"];
       defaults.forEach((comp) => {
         competencyAverages[comp] = 70;
       });
@@ -402,7 +411,7 @@ export default function InstitutionalDashboard() {
       "Other": 0,
     };
 
-    candidates.forEach((c) => {
+    cohortCandidates.forEach((c) => {
       if (c.warningEvents) {
         c.warningEvents.forEach((ev: any) => {
           const reason = ev.reason.toLowerCase();
@@ -431,7 +440,7 @@ export default function InstitutionalDashboard() {
       competencyGapData,
       warningsChartData,
     };
-  }, [candidates]);
+  }, [cohortCandidates, filterRole]);
 
   // ── DETAILED EXPORT GENERATORS ───────────────────────────────────────────
   const exportAllCandidatesToExcel = () => {
@@ -1718,6 +1727,38 @@ export default function InstitutionalDashboard() {
 
                         // Derive scoring rationale
                         const getRationale = () => {
+                          const taskId = r.taskId || "";
+                          if (taskId === "sprint-planning") {
+                            return pct >= 75
+                              ? "Excellent backlog prioritization. Critical P0 bug (FIN-2847) was prioritized first, and integration testing tasks were placed appropriately."
+                              : "Suboptimal sprint ordering. P0 bug was not prioritized first, or non-blocking documentation was prioritized ahead of critical fixes.";
+                          }
+                          if (taskId === "webhook-fix") {
+                            return pct >= 100
+                              ? "Optimal webhook delay timeout chosen (5000ms). Safely within Stripe's response window."
+                              : "Suboptimal delay timeout selected. Choice could lead to webhook queue timeouts or Stripe retry lockouts.";
+                          }
+                          if (taskId === "root-cause") {
+                            return pct >= 100
+                              ? "Correct root cause identified: Stripe webhook signature verify fails due to payload mismatch (rc-a)."
+                              : "Incorrect root cause hypothesis. Log evidence and metrics did not support the selected cause.";
+                          }
+                          if (taskId === "pr-submission") {
+                            return pct >= 80
+                              ? "Comprehensive PR documentation. Thoroughly covered changes, testing strategies, and risk evaluation."
+                              : "PR documentation lacked key sections or was too short to guide code reviews.";
+                          }
+                          if (taskId === "slack-update") {
+                            return pct >= 100
+                              ? "Clear and actionable stakeholder Slack alert. Provided resolution status and service health updates."
+                              : "Stakeholder update was too brief or lacked clear resolution context.";
+                          }
+                          if (taskId === "sprint-retro") {
+                            return pct >= 100
+                              ? "High-quality retrospective. Identified specific technical debt and proposed concrete improvements."
+                              : "Retrospective notes lacked technical depth or actionable improvement points.";
+                          }
+
                           const type = r.interactionType || "";
                           if (pct === 0) return "No credit awarded — response was empty, irrelevant, or failed quality check.";
                           if (type === "SingleSelect") {

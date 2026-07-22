@@ -344,6 +344,10 @@ function generateMockCandidates() {
       });
     }
 
+    // Determine role
+    const isSde = i % 4 === 0;
+    const role = isSde ? "sde" : "data-scientist";
+
     // Result & competency scores (completed only)
     let result = null;
     if (status === "COMPLETED" || status === "TERMINATED") {
@@ -352,15 +356,27 @@ function generateMockCandidates() {
 
       // Generate competency scores centered around overallScore
       const competencyScores: Record<string, number> = {};
-      const comps = [
-        "ProblemFraming", "DataLiteracy", "AnalyticalReasoning", "RootCauseAnalysis",
-        "Prioritization", "BusinessThinking", "DataQualityAwareness", "Communication"
-      ];
       
-      comps.forEach((comp, idx) => {
-        const offset = -15 + ((i + idx * 7) % 31); // -15 to +15
-        competencyScores[comp] = Math.min(100, Math.max(10, Math.round(scoreInt + offset)));
-      });
+      if (isSde) {
+        const sdeComps = [
+          "RequirementUnderstanding", "EngineeringPlanning", "CodebaseNavigation", "InvestigationDebugging",
+          "FeatureImplementation", "APIAndDatabaseIntegration", "TestingAndQuality", "EngineeringCommunication",
+          "Productivity", "AICollaboration", "EngineeringBehavior", "DeliveryExcellence"
+        ];
+        sdeComps.forEach((comp, idx) => {
+          const offset = -12 + ((i + idx * 5) % 25); // -12 to +12
+          competencyScores[comp] = Math.min(100, Math.max(10, Math.round(scoreInt + offset)));
+        });
+      } else {
+        const dsComps = [
+          "ProblemFraming", "DataLiteracy", "AnalyticalReasoning", "RootCauseAnalysis",
+          "Prioritization", "BusinessThinking", "DataQualityAwareness", "Communication"
+        ];
+        dsComps.forEach((comp, idx) => {
+          const offset = -15 + ((i + idx * 7) % 31); // -15 to +15
+          competencyScores[comp] = Math.min(100, Math.max(10, Math.round(scoreInt + offset)));
+        });
+      }
 
       // Readiness Level
       let readinessLevel = "Explorer";
@@ -369,41 +385,106 @@ function generateMockCandidates() {
       else if (scoreInt > 40) readinessLevel = "Emerging Professional";
 
       // Archetype
-      const archetypeObj = archetypes[i % archetypes.length];
-      const archetype = archetypeObj.name;
+      let archetype = "Analytical Professional";
+      if (isSde) {
+        const sdeArchetypes = [
+          "Methodical Developer", "Systems Architect", "Pragmatic Engineer",
+          "Quality Champion", "Rapid Incident Responder"
+        ];
+        archetype = sdeArchetypes[i % sdeArchetypes.length];
+      } else {
+        const archetypeObj = archetypes[i % archetypes.length];
+        archetype = archetypeObj.name;
+      }
 
       // Strengths & Improvements
-      const strengthsList = [
-        "Structuring ambiguous problems systematically",
-        "Reading and interpreting data dashboards",
-        "Forming and validating hypotheses from data",
-        "Identifying root causes from evidence",
-        "Prioritizing high-impact investigations",
-        "Connecting data insights to business outcomes",
-        "Recognizing data quality risks",
-        "Communicating findings clearly to stakeholders"
-      ];
+      let strengths: string[] = [];
+      let improvements: string[] = [];
 
-      const improvementsList = [
-        "Work on breaking down vague problems into measurable questions",
-        "Practice reading and interpreting multi-metric dashboards",
-        "Work on structuring hypotheses before jumping to conclusions",
-        "Practice the 5-Why framework for investigating issues",
-        "Build intuition for weighing urgency vs. impact",
-        "Focus on connecting data findings to revenue and cost impact",
-        "Study common data quality issues and their downstream effects",
-        "Practice summarizing insights in executive-friendly language"
-      ];
+      if (isSde) {
+        const sdeStrengthsList = [
+          "Translating business requirements into clear technical acceptance criteria",
+          "Logically planning sprint tasks and placing critical bugs first",
+          "Navigating complex directory trees to isolate relevant source code files",
+          "Methodically debugging outages by correlating logs with system metrics",
+          "Developing correct, standards-aligned timeout and queue configurations",
+          "Integrating systems cleanly without introducing resource leaks or deadlocks",
+          "Writing and executing comprehensive test suites to validate bug fixes",
+          "Documenting code changes thoroughly in structured pull request descriptions",
+          "Maintaining a high pace of delivery and minimal idle time during incidents",
+          "Collaborating effectively with AI assistants using precise system engineering prompts",
+          "Proactively changing approach and refactoring when tests fail",
+          "Delivering high-quality sprint reports and clear debrief notes"
+        ];
 
-      const sortedComps = Object.entries(competencyScores).sort((a, b) => b[1] - a[1]);
-      const strengths = [
-        strengthsList[comps.indexOf(sortedComps[0][0])],
-        strengthsList[comps.indexOf(sortedComps[1][0])],
-      ];
-      const improvements = [
-        improvementsList[comps.indexOf(sortedComps[sortedComps.length - 1][0])],
-        improvementsList[comps.indexOf(sortedComps[sortedComps.length - 2][0])],
-      ];
+        const sdeImprovementsList = [
+          "Practice reading documentation and tracking user flows before beginning implementation",
+          "Prioritize P0 customer outages over non-blocking tech debt in sprint planning",
+          "Improve speed and familiarity when tracing functions in large codebases",
+          "Practice correlating logs and metric timestamps to verify root cause",
+          "Study common third-party API timeout and retry window specifications",
+          "Study connection pool timeouts and database transaction lock boundaries",
+          "Run the full local test suite before submitting pull requests",
+          "Ensure PR descriptions always detail verification steps and risk assessment",
+          "Avoid task switching and reduce passive idle intervals during active workspace tasks",
+          "Leverage AI assistants to speed up boilerplate code generation and edge-case testing",
+          "Ensure a systematic approach to code changes rather than ad-hoc trial and error",
+          "Structure retro summaries with specific actionable technical improvements"
+        ];
+
+        const sdeComps = [
+          "RequirementUnderstanding", "EngineeringPlanning", "CodebaseNavigation", "InvestigationDebugging",
+          "FeatureImplementation", "APIAndDatabaseIntegration", "TestingAndQuality", "EngineeringCommunication",
+          "Productivity", "AICollaboration", "EngineeringBehavior", "DeliveryExcellence"
+        ];
+
+        const sortedSdeComps = Object.entries(competencyScores).sort((a, b) => b[1] - a[1]);
+        strengths = [
+          sdeStrengthsList[sdeComps.indexOf(sortedSdeComps[0][0])],
+          sdeStrengthsList[sdeComps.indexOf(sortedSdeComps[1][0])],
+        ];
+        improvements = [
+          sdeImprovementsList[sdeComps.indexOf(sortedSdeComps[sortedSdeComps.length - 1][0])],
+          sdeImprovementsList[sdeComps.indexOf(sortedSdeComps[sortedSdeComps.length - 2][0])],
+        ];
+      } else {
+        const dsStrengthsList = [
+          "Structuring ambiguous problems systematically",
+          "Reading and interpreting data dashboards",
+          "Forming and validating hypotheses from data",
+          "Identifying root causes from evidence",
+          "Prioritizing high-impact investigations",
+          "Connecting data insights to business outcomes",
+          "Recognizing data quality risks",
+          "Communicating findings clearly to stakeholders"
+        ];
+
+        const dsImprovementsList = [
+          "Work on breaking down vague problems into measurable questions",
+          "Practice reading and interpreting multi-metric dashboards",
+          "Work on structuring hypotheses before jumping to conclusions",
+          "Practice the 5-Why framework for investigating issues",
+          "Build intuition for weighing urgency vs. impact",
+          "Focus on connecting data findings to revenue and cost impact",
+          "Study common data quality issues and their downstream effects",
+          "Practice summarizing insights in executive-friendly language"
+        ];
+
+        const dsComps = [
+          "ProblemFraming", "DataLiteracy", "AnalyticalReasoning", "RootCauseAnalysis",
+          "Prioritization", "BusinessThinking", "DataQualityAwareness", "Communication"
+        ];
+
+        const sortedDsComps = Object.entries(competencyScores).sort((a, b) => b[1] - a[1]);
+        strengths = [
+          dsStrengthsList[dsComps.indexOf(sortedDsComps[0][0])],
+          dsStrengthsList[dsComps.indexOf(sortedDsComps[1][0])],
+        ];
+        improvements = [
+          dsImprovementsList[dsComps.indexOf(sortedDsComps[sortedDsComps.length - 1][0])],
+          dsImprovementsList[dsComps.indexOf(sortedDsComps[sortedDsComps.length - 2][0])],
+        ];
+      }
 
       result = {
         overallScore: scoreInt,
@@ -415,64 +496,153 @@ function generateMockCandidates() {
       };
     }
 
-    // Generate detailed mission responses (completed candidates have 8, terminated have 4, in_progress have 2)
+    // Generate detailed responses (completed has max, terminated has fewer, in_progress has 1 or 2)
     const responses = [];
-    const responseCount = status === "COMPLETED" ? 8 : (status === "TERMINATED" ? 4 : 2);
     
-    const missionNames = [
-      "M1: Onboarding & Data Load Check",
-      "M2: SQL Pipeline Investigation",
-      "M3: Dashboard Anomaly Discovery",
-      "M4: Root Cause Deep-Dive",
-      "M5: Business Impact Valuation",
-      "M6: A/B Test Hypotheses",
-      "M7: Presentation Preparation",
-      "M8: Stakeholder Briefing"
-    ];
-
-    const promptDetails = [
-      "Identify the incorrect join type causing missing user transactions.",
-      "Diagnose slow query performance in the customer dashboard database.",
-      "Isolate a drop in core conversions for iOS v15 users.",
-      "Investigate third-party payment gateway latency spike.",
-      "Calculate financial loss due to checkout downtime in Q2.",
-      "Formulate statistical null and alternative hypotheses for button test.",
-      "Filter out anomalous bot transactions from core metrics.",
-      "Explain the trade-offs of the chosen solution to the Chief Product Officer."
-    ];
-
-    const compMapping = [
-      ["ProblemFraming", "DataLiteracy"],
-      ["AnalyticalReasoning", "DataQualityAwareness"],
-      ["DataLiteracy", "AnalyticalReasoning"],
-      ["RootCauseAnalysis", "Prioritization"],
-      ["BusinessThinking", "Prioritization"],
-      ["AnalyticalReasoning", "ProblemFraming"],
-      ["DataQualityAwareness", "AnalyticalReasoning"],
-      ["Communication", "BusinessThinking"]
-    ];
-
-    for (let r = 0; r < responseCount; r++) {
-      const isCorrect = (i + r) % 3 !== 0; // 66% correct rate
-      const maxScore = 10;
-      const scoreEarned = isCorrect ? 10 : (3 + ((i + r) % 5)); // 3-7 score
-
-      responses.push({
-        missionId: `mission_${r + 1}`,
-        taskId: `task_${r + 1}`,
-        scoreEarned,
-        maxScore,
-        selectedOption: {
-          title: missionNames[r],
-          description: promptDetails[r],
-          isCorrect,
+    if (isSde) {
+      const responseCount = status === "COMPLETED" ? 6 : (status === "TERMINATED" ? 3 : 1);
+      
+      const sdeTasks = [
+        {
+          taskId: "sprint-planning",
+          missionId: "sprint-planning",
+          interactionType: "Ranking",
+          title: "Sprint Planning",
+          description: "Prioritized the sprint backlog for Sprint 22. Placed critical bug fix (FIN-2847) first.",
+          isCorrect: true,
+          textValue: undefined,
+          competenciesHit: ["EngineeringPlanning"]
         },
-        textValue: isCorrect 
-          ? "I isolated the issue by matching the timestamps across logs."
-          : "I think the query might be missing index variables.",
-        sliderValue: scoreEarned * 10,
-        competenciesHit: compMapping[r],
-      });
+        {
+          taskId: "webhook-fix",
+          missionId: "implementation",
+          interactionType: "SingleSelect",
+          title: "Stripe Webhook Timeout Fix",
+          description: "Applied the optimal timeout fix configuration: fix-a (5000ms delay timeout).",
+          isCorrect: true,
+          textValue: undefined,
+          competenciesHit: ["FeatureImplementation"]
+        },
+        {
+          taskId: "root-cause",
+          missionId: "incident",
+          interactionType: "SingleSelect",
+          title: "Outage Root Cause Analysis",
+          description: "Identified the root cause: rc-a (Stripe webhook signature verify fails due to payload mismatch).",
+          isCorrect: true,
+          textValue: undefined,
+          competenciesHit: ["InvestigationDebugging"]
+        },
+        {
+          taskId: "pr-submission",
+          missionId: "pr-review",
+          interactionType: "ShortText",
+          title: "PR Submission: fix webhook timeout for Stripe events",
+          description: "Created a pull request for the webhook delay fix.",
+          isCorrect: true,
+          textValue: "fix: increase webhook queue timeout for Stripe events (FIN-2847)\n\nWhat changed: Increased queue retry delays.\nVerification: Verified Stripe max response window is 5000ms.",
+          competenciesHit: ["EngineeringCommunication", "DeliveryExcellence"]
+        },
+        {
+          taskId: "slack-update",
+          missionId: "communication",
+          interactionType: "ShortText",
+          title: "Platform Alert Update (#platform-alerts)",
+          description: "Sent an incident update slack notification to stakeholders.",
+          isCorrect: true,
+          textValue: "[Resolved] Checkout outage root caused and fix merged. Webhook verifies successfully now. Services operating at 100% capacity.",
+          competenciesHit: ["EngineeringCommunication"]
+        },
+        {
+          taskId: "sprint-retro",
+          missionId: "sprint-review",
+          interactionType: "ShortText",
+          title: "Sprint 22 Retrospective Notes",
+          description: "Wrote retrospective notes covering sprint delivery and improvements.",
+          isCorrect: true,
+          textValue: "Sprint retrospect note: We successfully resolved the payment gateway P1 outage. Moving forward, we should set up automated regression tests for Stripe webhook integrations and ensure proper documentation is in place for fallback environments.",
+          competenciesHit: ["DeliveryExcellence"]
+        }
+      ];
+
+      for (let r = 0; r < responseCount; r++) {
+        const t = sdeTasks[r];
+        const isCorrect = (i + r) % 5 !== 0; // mostly correct
+        const scoreEarned = isCorrect ? 100 : 50;
+
+        responses.push({
+          missionId: t.missionId,
+          taskId: t.taskId,
+          scoreEarned,
+          maxScore: 100,
+          selectedOption: {
+            title: t.title,
+            description: t.description,
+            isCorrect,
+          },
+          textValue: t.textValue,
+          sliderValue: undefined,
+          competenciesHit: t.competenciesHit,
+        });
+      }
+    } else {
+      const responseCount = status === "COMPLETED" ? 8 : (status === "TERMINATED" ? 4 : 2);
+      
+      const missionNames = [
+        "M1: Onboarding & Data Load Check",
+        "M2: SQL Pipeline Investigation",
+        "M3: Dashboard Anomaly Discovery",
+        "M4: Root Cause Deep-Dive",
+        "M5: Business Impact Valuation",
+        "M6: A/B Test Hypotheses",
+        "M7: Presentation Preparation",
+        "M8: Stakeholder Briefing"
+      ];
+
+      const promptDetails = [
+        "Identify the incorrect join type causing missing user transactions.",
+        "Diagnose slow query performance in the customer dashboard database.",
+        "Isolate a drop in core conversions for iOS v15 users.",
+        "Investigate third-party payment gateway latency spike.",
+        "Calculate financial loss due to checkout downtime in Q2.",
+        "Formulate statistical null and alternative hypotheses for button test.",
+        "Filter out anomalous bot transactions from core metrics.",
+        "Explain the trade-offs of the chosen solution to the Chief Product Officer."
+      ];
+
+      const compMapping = [
+        ["ProblemFraming", "DataLiteracy"],
+        ["AnalyticalReasoning", "DataQualityAwareness"],
+        ["DataLiteracy", "AnalyticalReasoning"],
+        ["RootCauseAnalysis", "Prioritization"],
+        ["BusinessThinking", "Prioritization"],
+        ["AnalyticalReasoning", "ProblemFraming"],
+        ["DataQualityAwareness", "AnalyticalReasoning"],
+        ["Communication", "BusinessThinking"]
+      ];
+
+      for (let r = 0; r < responseCount; r++) {
+        const isCorrect = (i + r) % 3 !== 0; // 66% correct rate
+        const maxScore = 10;
+        const scoreEarned = isCorrect ? 10 : (3 + ((i + r) % 5)); // 3-7 score
+
+        responses.push({
+          missionId: `mission_${r + 1}`,
+          taskId: `task_${r + 1}`,
+          scoreEarned,
+          maxScore,
+          selectedOption: {
+            title: missionNames[r],
+            description: promptDetails[r],
+            isCorrect,
+          },
+          textValue: isCorrect 
+            ? "I isolated the issue by matching the timestamps across logs."
+            : "I think the query might be missing index variables.",
+          sliderValue: scoreEarned * 10,
+          competenciesHit: compMapping[r],
+        });
+      }
     }
 
     mockCandidates.push({
@@ -492,7 +662,7 @@ function generateMockCandidates() {
       completedAt: completedAtDate ? completedAtDate.toISOString() : null,
       timeTaken,
       status,
-      role: i % 4 === 0 ? "sde" : "data-scientist",
+      role,
       warningCount,
       warningEvents,
       result,

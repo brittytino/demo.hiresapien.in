@@ -332,6 +332,120 @@ Respond with: "score: [number]" on the first line, then brief reasoning.`;
       }
     }
 
+    // Save detailed responses for SDE candidate in SimulationResponse table
+    try {
+      const { SimulationResponse } = await import("@/models/SimulationResponse");
+      
+      const sdeResponses = [
+        {
+          candidateId: candidateObjectId,
+          attemptId: attemptObjectId,
+          taskId: "sprint-planning",
+          missionId: "sprint-planning",
+          interactionType: "Ranking",
+          selectedOption: {
+            title: "Sprint Planning",
+            description: `Prioritized the sprint backlog for Sprint 22. Ordered items: ${(sprintOrder || []).join(" -> ")}`,
+            isCorrect: (sprintScore ?? 0) >= 75,
+          },
+          scoreEarned: sprintScore ?? 0,
+          maxScore: 100,
+          competenciesHit: ["EngineeringPlanning"],
+        },
+        {
+          candidateId: candidateObjectId,
+          attemptId: attemptObjectId,
+          taskId: "webhook-fix",
+          missionId: "implementation",
+          interactionType: "SingleSelect",
+          selectedOption: {
+            title: "Stripe Webhook Timeout Fix",
+            description: `Applied the webhook timeout configuration: ${
+              selectedFix === "fix-a" ? "fix-a (5000ms delay timeout)" :
+              selectedFix === "fix-b" ? "fix-b (10000ms delay timeout)" :
+              selectedFix === "fix-c" ? "fix-c (15000ms delay timeout)" :
+              selectedFix || "None"
+            }`,
+            isCorrect: selectedFix === "fix-a",
+          },
+          scoreEarned: selectedFix === "fix-a" ? 100 : selectedFix === "fix-b" ? 15 : selectedFix === "fix-c" ? 10 : 0,
+          maxScore: 100,
+          competenciesHit: ["FeatureImplementation"],
+        },
+        {
+          candidateId: candidateObjectId,
+          attemptId: attemptObjectId,
+          taskId: "root-cause",
+          missionId: "incident",
+          interactionType: "SingleSelect",
+          selectedOption: {
+            title: "Outage Root Cause Analysis",
+            description: `Identified the root cause: ${
+              rootCause === "rc-a" ? "rc-a (Stripe webhook signature verify fails due to payload mismatch)" :
+              rootCause || "None"
+            }`,
+            isCorrect: rootCause === "rc-a",
+          },
+          scoreEarned: rootCause === "rc-a" ? 100 : 0,
+          maxScore: 100,
+          competenciesHit: ["InvestigationDebugging"],
+        },
+        {
+          candidateId: candidateObjectId,
+          attemptId: attemptObjectId,
+          taskId: "pr-submission",
+          missionId: "pr-review",
+          interactionType: "ShortText",
+          selectedOption: {
+            title: `PR Submission: ${prTitle || ""}`,
+            description: `Submitted a Pull Request for review: "${prTitle || ""}"`,
+            isCorrect: (prDescription?.length ?? 0) >= 80,
+          },
+          textValue: prDescription || "",
+          scoreEarned: rawScores.EngineeringCommunication ?? 60,
+          maxScore: 100,
+          competenciesHit: ["EngineeringCommunication", "DeliveryExcellence"],
+        },
+        {
+          candidateId: candidateObjectId,
+          attemptId: attemptObjectId,
+          taskId: "slack-update",
+          missionId: "communication",
+          interactionType: "ShortText",
+          selectedOption: {
+            title: "Platform Alert Update (#platform-alerts)",
+            description: "Sent an incident update slack notification to stakeholders.",
+            isCorrect: (slackMessage?.length ?? 0) >= 50,
+          },
+          textValue: slackMessage || "",
+          scoreEarned: slackMessage?.length > 50 ? 100 : 50,
+          maxScore: 100,
+          competenciesHit: ["EngineeringCommunication"],
+        },
+        {
+          candidateId: candidateObjectId,
+          attemptId: attemptObjectId,
+          taskId: "sprint-retro",
+          missionId: "sprint-review",
+          interactionType: "ShortText",
+          selectedOption: {
+            title: "Sprint 22 Retrospective Notes",
+            description: "Wrote retrospective notes covering sprint delivery and improvements.",
+            isCorrect: (sprintNotes?.length ?? 0) >= 60,
+          },
+          textValue: sprintNotes || "",
+          scoreEarned: sprintNotes?.length > 60 ? 100 : 50,
+          maxScore: 100,
+          competenciesHit: ["DeliveryExcellence"],
+        }
+      ];
+
+      await SimulationResponse.insertMany(sdeResponses as any);
+      console.log(`[Database] Saved ${sdeResponses.length} detailed responses for SDE candidate attempt ${attemptId}`);
+    } catch (err) {
+      console.error("Failed to save SDE responses in SimulationResponse table:", err);
+    }
+
     // Update workspace session
     await WorkspaceSession.findOneAndUpdate(
       { attemptId },
