@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ChevronRight, AlertTriangle,
+  ChevronRight, ChevronLeft, PanelRightClose, PanelRightOpen, AlertTriangle,
   Bell, User, Clock, Wifi, Mail, MailOpen, X,
   ArrowLeft, Archive, AlertOctagon, Trash2, CheckSquare, FolderOpen, Tag, MoreVertical, Printer, ExternalLink, Star, CornerUpLeft, CornerUpRight,
   Search, Settings, Grid, ShieldCheck, Phone, Calendar, Inbox, Lightbulb, FileCode2, GitPullRequest, GitBranch,
@@ -120,6 +120,24 @@ export default function SDEWorkspacePage() {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showMailModal, setShowMailModal] = useState(false);
   const startTimeRef = useRef(Date.now());
+
+  const [isBriefCollapsed, setIsBriefCollapsed] = useState(false);
+  const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
+
+  // Responsive: collapse sidebar on screen width < 1100px
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleResize = () => {
+      const isSmall = window.innerWidth < 1100;
+      setIsMobileOrTablet(isSmall);
+      if (isSmall) {
+        setIsBriefCollapsed(true);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Load candidate info and attempt from localStorage on mount
   useEffect(() => {
@@ -659,7 +677,7 @@ export default function SDEWorkspacePage() {
 
           {/* Bottom Copyright Text */}
           <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 20, textAlign: "center" }}>
-            Powered by Gemini &amp; Claude • Enterprise Workspace Simulation
+            Powered by Apex-Prime &amp; Spectre-Shadow • Enterprise Workspace Simulation
           </div>
         </div>
 
@@ -1559,37 +1577,137 @@ export default function SDEWorkspacePage() {
 
         {/* Right panel — only shown during task stages */}
         {!["welcome", "onboarding"].includes(state.stage) && (
-          <aside
+          <motion.aside
+            animate={{ width: isBriefCollapsed ? 48 : 300 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
             style={{
-              width: 300, minWidth: 300,
+              width: isBriefCollapsed ? 48 : 300,
+              minWidth: isBriefCollapsed ? 48 : 300,
               background: "var(--ws-paper-1)",
               borderLeft: "1px solid var(--ws-border-0)",
-              display: "flex", flexDirection: "column",
+              display: "flex",
+              flexDirection: "column",
               flexShrink: 0,
+              overflow: "hidden",
+              position: "relative",
+              cursor: isBriefCollapsed ? "pointer" : "default",
             }}
+            onClick={() => {
+              if (isBriefCollapsed) {
+                setIsBriefCollapsed(false);
+              }
+            }}
+            className={isBriefCollapsed ? "hover:bg-slate-50/80 transition-colors duration-200" : ""}
           >
-            {/* Panel header */}
-            <div
-              style={{
-                padding: "10px 16px",
-                borderBottom: "1px solid var(--ws-border-0)",
-                fontSize: 12, fontWeight: 600,
-                color: "var(--ws-ink-1)",
-              }}
-            >
-              Task Brief
-            </div>
+            {isBriefCollapsed ? (
+              /* Collapsed State */
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  paddingTop: 12,
+                  height: "100%",
+                  userSelect: "none",
+                }}
+              >
+                {/* Expand Icon Button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsBriefCollapsed(false);
+                  }}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: 8,
+                    cursor: "pointer",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--ws-ink-2)",
+                    transition: "all 0.2s ease",
+                  }}
+                  className="hover:bg-slate-200 hover:text-blue-600"
+                  title="Expand Task Brief"
+                >
+                  <PanelRightOpen className="w-5 h-5" />
+                </button>
 
-            {/* Panel content */}
-            <div style={{ flex: 1, overflow: "auto", padding: 16 }} className="ws-scroll">
-              <TaskBriefPanel
-                state={state}
-                setState={setState}
-                acChecked={acChecked}
-                setAcChecked={setAcChecked}
-              />
-            </div>
-          </aside>
+                {/* Vertical Sideways Text */}
+                <div
+                  style={{
+                    writingMode: "vertical-rl",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.15em",
+                    fontSize: 10,
+                    fontWeight: 700,
+                    color: "var(--ws-ink-3)",
+                    marginTop: 24,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                  }}
+                >
+                  <span>Task Brief</span>
+                </div>
+              </div>
+            ) : (
+              /* Expanded State */
+              <>
+                {/* Panel header */}
+                <div
+                  style={{
+                    padding: "10px 16px",
+                    borderBottom: "1px solid var(--ws-border-0)",
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: "var(--ws-ink-1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span>Task Brief</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsBriefCollapsed(true);
+                    }}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      padding: 4,
+                      cursor: "pointer",
+                      borderRadius: "50%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "var(--ws-ink-3)",
+                      transition: "all 0.2s ease",
+                    }}
+                    className="hover:bg-slate-100 hover:text-slate-700"
+                    title="Collapse Task Brief"
+                  >
+                    <PanelRightClose className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Panel content */}
+                <div style={{ flex: 1, overflow: "auto", padding: 16 }} className="ws-scroll">
+                  <div style={{ width: 268 }}>
+                    <TaskBriefPanel
+                      state={state}
+                      setState={setState}
+                      acChecked={acChecked}
+                      setAcChecked={setAcChecked}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+          </motion.aside>
         )}
       </div>
     </div>

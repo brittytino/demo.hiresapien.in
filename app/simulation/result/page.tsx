@@ -764,7 +764,7 @@ function ScrollResponsiveFooter() {
               HireSapien — Engineering Simulation Center
             </div>
             <div style={{ fontSize: 13, color: "#5E6C84", fontWeight: 500 }}>
-              Powered by Gemini &amp; Claude • Results stored securely • GDPR-compliant
+              Powered by Apex-Prime &amp; Spectre-Shadow • Results stored securely • GDPR-compliant
             </div>
           </div>
 

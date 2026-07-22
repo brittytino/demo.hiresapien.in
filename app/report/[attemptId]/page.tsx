@@ -205,8 +205,8 @@ export default function ReportPage({ params }: { params: Promise<{ attemptId: st
                   { label: "Session ID", value: attemptId.slice(0, 16) + "..." },
                   { label: "Active Time", value: report.activeTimeMs > 0 ? `${Math.round(report.activeTimeMs / 60000)} min` : "—" },
                   { label: "Events Logged", value: report.totalEventsLogged > 0 ? report.totalEventsLogged.toString() : "—" },
-                  { label: "Primary Model", value: "Gemini 1.5" },
-                  { label: "Shadow Model", value: "Claude 3" },
+                  { label: "Primary Model", value: "Apex-Prime 1.5" },
+                  { label: "Shadow Model", value: "Spectre-Shadow 3.0" },
                 ].map(item => (
                   <div key={item.label} style={{ minWidth: 100 }}>
                     <div style={{ fontSize: 9.5, color: "var(--ws-ink-3)", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}>
@@ -559,8 +559,8 @@ export default function ReportPage({ params }: { params: Promise<{ attemptId: st
               This report was generated using HireSapien&apos;s 12-competency evidence-based framework.
               Behavioral scores are derived from {report.totalEventsLogged} logged workspace events
               (file opens, navigation patterns, task ordering, fix selection, test execution).
-              Open-ended artifacts (PR description, team update) were evaluated by Gemini 1.5 Flash as the primary model
-              and Claude 3 Haiku as the shadow model.
+              Open-ended artifacts (PR description, team update) were evaluated by Apex-Prime 1.5 as the primary model
+              and Spectre-Shadow 3.0 as the shadow model.
               Hiring recommendation thresholds are fixed constants — not LLM-decided.
               {report.aiDivergenceDetected && (
                 <span style={{ color: "var(--ws-warning)" }}>
@@ -643,7 +643,7 @@ function ScrollResponsiveFooter() {
               HireSapien — Engineering Simulation Center
             </div>
             <div style={{ fontSize: 13, color: "var(--ws-ink-2)", fontWeight: 500 }}>
-              Powered by Gemini &amp; Claude • Results stored securely • GDPR-compliant
+              Powered by Apex-Prime &amp; Spectre-Shadow • Results stored securely • GDPR-compliant
             </div>
           </div>
 
@@ -981,7 +981,7 @@ function CompetencyRow({
                   display: "inline-block",
                 }}
               >
-                Primary (Gemini): {comp.score} · Shadow (Claude): {comp.shadowScore}
+                Primary (Apex-Prime): {comp.score} · Shadow (Spectre): {comp.shadowScore}
                 {Math.abs(comp.score - comp.shadowScore) > 15 && (
                   <span style={{ color: "var(--ws-warning)", marginLeft: 8 }}>⚠ Divergence</span>
                 )}

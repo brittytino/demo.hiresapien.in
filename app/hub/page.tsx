@@ -1211,7 +1211,7 @@ export default function HubPage() {
                 {
                   icon: <Sparkles className="w-5 h-5" />,
                   title: "Dual AI Evaluation",
-                  body: "Gemini evaluates open-ended artifacts as the primary scorer. Claude runs as a shadow model. Divergence > 15 points flags sessions for human review.",
+                  body: "Apex-Prime evaluates open-ended artifacts as the primary scorer. Spectre-Shadow runs as a shadow model. Divergence > 15 points flags sessions for human review.",
                 },
                 {
                   icon: <Zap className="w-5 h-5" />,
@@ -1362,7 +1362,7 @@ function ScrollResponsiveFooter() {
               HireSapien — Engineering Stimulation Center
             </div>
             <div style={{ fontSize: 13, color: "var(--ws-ink-2)", fontWeight: 500 }}>
-              Powered by Gemini &amp; Claude • Results stored securely • GDPR-compliant
+              Powered by Apex-Prime &amp; Spectre-Shadow • Results stored securely • GDPR-compliant
             </div>
           </div>
 
