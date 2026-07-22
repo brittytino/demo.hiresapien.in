@@ -37,7 +37,7 @@ jobs:
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
-          password: ${{ secrets.VPS_PASSWORD }}
+          key: ${{ secrets.VPS_KEY }}
           source: ".next/standalone/*"
           target: "/var/www/datascience.sonascale.hiresapien.com"
           strip_components: 2 # Removes the .next/standalone part from the path on the server
@@ -47,7 +47,7 @@ jobs:
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
-          password: ${{ secrets.VPS_PASSWORD }}
+          key: ${{ secrets.VPS_KEY }}
           script: |
             cd /var/www/datascience.sonascale.hiresapien.com
             pm2 reload ecosystem.config.js || pm2 start ecosystem.config.js
