@@ -28,3 +28,4 @@ dirs.forEach(dir => {
     console.log('Updated', p);
   }
 });
+
